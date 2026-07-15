@@ -16,42 +16,118 @@ const Logo = ({ width = 116 }) => (
   </div>
 )
 
-const Nav = () => (
-  <nav style={{
-    position: 'sticky',
-    top: 0,
-    zIndex: 50,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '18px clamp(20px, 5vw, 64px)',
-    background: 'rgba(13, 13, 15, 0.82)',
-    backdropFilter: 'blur(12px)',
-    borderBottom: '1px solid #26262b'
-  }}>
-    <Logo />
-    <div style={{
+const Nav = () => {
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const closeMenu = () => setMenuOpen(false)
+
+  return (
+    <nav style={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 50,
       display: 'flex',
       alignItems: 'center',
-      gap: 'clamp(14px, 3vw, 32px)',
-      fontFamily: "'JetBrains Mono'",
-      fontSize: '13px'
+      justifyContent: 'space-between',
+      padding: '18px clamp(20px, 5vw, 64px)',
+      background: 'rgba(13, 13, 15, 0.82)',
+      backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid #26262b'
     }}>
-      <a href="#work" style={{ color: '#8A8A93' }}>Projects</a>
-      <a href="#services" style={{ color: '#8A8A93' }}>Services</a>
-      <a href="#pricing" style={{ color: '#8A8A93' }}>Pricing</a>
-      <a href="#contact" style={{
-        display: 'inline-flex',
+      <Logo />
+
+      {/* Desktop Nav */}
+      <div data-nav-desktop style={{
+        display: 'flex',
         alignItems: 'center',
-        padding: '8px 16px',
-        background: '#C9F04B',
-        color: '#0D0D0F',
-        fontWeight: 700,
-        borderRadius: '4px'
-      }}>Start a project</a>
-    </div>
-  </nav>
-)
+        gap: 'clamp(14px, 3vw, 32px)',
+        fontFamily: "'JetBrains Mono'",
+        fontSize: '13px'
+      }}>
+        <a href="#work" style={{ color: '#8A8A93' }}>Projects</a>
+        <a href="#services" style={{ color: '#8A8A93' }}>Services</a>
+        <a href="#pricing" style={{ color: '#8A8A93' }}>Pricing</a>
+        <a href="#contact" style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          padding: '8px 16px',
+          background: '#C9F04B',
+          color: '#0D0D0F',
+          fontWeight: 700,
+          borderRadius: '4px'
+        }}>Start a project</a>
+      </div>
+
+      {/* Mobile Hamburger */}
+      <button
+        data-nav-toggle
+        onClick={() => setMenuOpen(!menuOpen)}
+        style={{
+          display: 'flex',
+          background: 'none',
+          border: 'none',
+          cursor: 'pointer',
+          padding: '4px',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+        aria-label="Toggle menu"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F2F2F0" strokeWidth="2">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div style={{
+          position: 'absolute',
+          top: '100%',
+          left: 0,
+          right: 0,
+          background: 'rgba(13, 13, 15, 0.95)',
+          borderBottom: '1px solid #26262b',
+          padding: '16px clamp(20px, 5vw, 64px)',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          fontFamily: "'JetBrains Mono'",
+          fontSize: '14px',
+          zIndex: 40
+        }}>
+          <a href="#work" onClick={closeMenu} style={{
+            color: '#C9F04B',
+            padding: '12px 0',
+            borderBottom: '1px solid #26262b'
+          }}>Projects</a>
+          <a href="#services" onClick={closeMenu} style={{
+            color: '#C9F04B',
+            padding: '12px 0',
+            borderBottom: '1px solid #26262b'
+          }}>Services</a>
+          <a href="#pricing" onClick={closeMenu} style={{
+            color: '#C9F04B',
+            padding: '12px 0',
+            borderBottom: '1px solid #26262b'
+          }}>Pricing</a>
+          <a href="#contact" onClick={closeMenu} style={{
+            display: 'flex',
+            alignItems: 'center',
+            padding: '12px 16px',
+            background: '#C9F04B',
+            color: '#0D0D0F',
+            fontWeight: 700,
+            borderRadius: '4px',
+            marginTop: '8px',
+            justifyContent: 'center'
+          }}>Start a project</a>
+        </div>
+      )}
+    </nav>
+  )
+}
 
 const Hero = () => (
   <header style={{
