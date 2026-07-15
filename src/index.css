@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0D0D0F;
+  color: #F2F2F0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.55;
+}
+
+a {
+  color: #C9F04B;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #F2F2F0;
+}
+
+::selection {
+  background: #C9F04B;
+  color: #0D0D0F;
+}
+
+:focus-visible {
+  outline: 2px solid #C9F04B;
+  outline-offset: 3px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #C9F04B;
+  outline-offset: 1px;
+}
+
+/* Typography */
+h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(34px, 6vw, 74px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: clamp(26px, 4vw, 46px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+p {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* Animations */
+@keyframes ddStrike {
+  0% {
+    stroke-dashoffset: 1200;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  18% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  22% {
+    opacity: 0.2;
+  }
+  26% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes ddFlash {
+  0%,
+  17%,
+  23%,
+  100% {
+    opacity: 0;
+  }
+  19% {
+    opacity: 0.5;
+  }
+  25% {
+    opacity: 0.35;
+  }
+}
+
+/* Reduced motion respect */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .dd-bolt {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+
+  .dd-flash {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
