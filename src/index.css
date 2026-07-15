@@ -1,5 +1,30 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Inter:wght@400;500;600;700&display=swap');
 
+:root {
+  --bg-primary: #0D0D0F;
+  --bg-secondary: #161619;
+  --border: #26262b;
+  --border-light: #3a3a41;
+  --text-primary: #F2F2F0;
+  --text-secondary: #8A8A93;
+  --text-muted: #5a5a61;
+  --accent: #C9F04B;
+  --accent-dark: #0D0D0F;
+  --blur-bg: rgba(13, 13, 15, 0.82);
+  --glow: rgba(201, 240, 75, 0.7);
+}
+
+:root[data-theme="light"] {
+  --bg-primary: #F2F2F0;
+  --bg-secondary: #E8DCC8;
+  --border: #D0C4B8;
+  --border-light: #C4B8AC;
+  --text-primary: #0D0D0F;
+  --text-secondary: #3a3a41;
+  --text-muted: #6b6b73;
+  --blur-bg: rgba(242, 242, 240, 0.85);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -11,36 +36,37 @@ html {
 }
 
 body {
-  background: #0D0D0F;
-  color: #F2F2F0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'Inter', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   line-height: 1.55;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 a {
-  color: #C9F04B;
+  color: var(--accent);
   text-decoration: none;
 }
 
 a:hover {
-  color: #F2F2F0;
+  color: var(--text-primary);
 }
 
 ::selection {
-  background: #C9F04B;
-  color: #0D0D0F;
+  background: var(--accent);
+  color: var(--accent-dark);
 }
 
 :focus-visible {
-  outline: 2px solid #C9F04B;
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid #C9F04B;
+  outline: 2px solid var(--accent);
   outline-offset: 1px;
 }
 

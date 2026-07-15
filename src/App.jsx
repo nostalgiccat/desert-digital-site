@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 const Logo = ({ width = 116 }) => (
@@ -8,15 +8,15 @@ const Logo = ({ width = 116 }) => (
       fontWeight: 700,
       fontSize: '14px',
       letterSpacing: '0.05em',
-      color: '#F2F2F0'
+      color: 'var(--text-primary)'
     }}>DESERT DIGITAL</span>
     <svg viewBox="0 0 240 20" width={width} height={width * 9 / 116} aria-hidden="true">
-      <path d="M0 18 L60 18 L76 6 L120 6 L134 15 L176 15 L192 3 L240 3" fill="none" stroke="#F2F2F0" strokeWidth="3" />
+      <path d="M0 18 L60 18 L76 6 L120 6 L134 15 L176 15 L192 3 L240 3" fill="none" stroke="var(--text-primary)" strokeWidth="3" />
     </svg>
   </div>
 )
 
-const Nav = () => {
+const Nav = ({ isDark, toggleTheme }) => {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const closeMenu = () => setMenuOpen(false)
@@ -30,9 +30,9 @@ const Nav = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '18px clamp(20px, 5vw, 64px)',
-      background: 'rgba(13, 13, 15, 0.82)',
+      background: 'var(--blur-bg)',
       backdropFilter: 'blur(12px)',
-      borderBottom: '1px solid #26262b'
+      borderBottom: '1px solid var(--border)'
     }}>
       <Logo />
 
@@ -44,18 +44,51 @@ const Nav = () => {
         fontFamily: "'JetBrains Mono'",
         fontSize: '13px'
       }}>
-        <a href="#work" style={{ color: '#8A8A93' }}>Projects</a>
-        <a href="#services" style={{ color: '#8A8A93' }}>Services</a>
-        <a href="#pricing" style={{ color: '#8A8A93' }}>Pricing</a>
+        <a href="#work" style={{ color: 'var(--text-secondary)' }}>Projects</a>
+        <a href="#services" style={{ color: 'var(--text-secondary)' }}>Services</a>
+        <a href="#pricing" style={{ color: 'var(--text-secondary)' }}>Pricing</a>
         <a href="#contact" style={{
           display: 'inline-flex',
           alignItems: 'center',
           padding: '8px 16px',
-          background: '#C9F04B',
-          color: '#0D0D0F',
+          background: 'var(--accent)',
+          color: 'var(--accent-dark)',
           fontWeight: 700,
           borderRadius: '4px'
         }}>Start a project</a>
+
+        <button
+          onClick={toggleTheme}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'var(--text-secondary)'
+          }}
+          aria-label="Toggle dark/light mode"
+        >
+          {isDark ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+              <line x1="1" y1="12" x2="3" y2="12" />
+              <line x1="21" y1="12" x2="23" y2="12" />
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+            </svg>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Mobile Hamburger */}
@@ -73,7 +106,7 @@ const Nav = () => {
         }}
         aria-label="Toggle menu"
       >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F2F2F0" strokeWidth="2">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <line x1="3" y1="6" x2="21" y2="6" />
           <line x1="3" y1="12" x2="21" y2="12" />
           <line x1="3" y1="18" x2="21" y2="18" />
@@ -88,7 +121,7 @@ const Nav = () => {
           left: 0,
           right: 0,
           background: 'rgba(13, 13, 15, 0.95)',
-          borderBottom: '1px solid #26262b',
+          borderBottom: '1px solid var(--border)',
           padding: '16px clamp(20px, 5vw, 64px)',
           display: 'flex',
           flexDirection: 'column',
@@ -98,26 +131,26 @@ const Nav = () => {
           zIndex: 40
         }}>
           <a href="#work" onClick={closeMenu} style={{
-            color: '#C9F04B',
+            color: 'var(--accent)',
             padding: '12px 0',
-            borderBottom: '1px solid #26262b'
+            borderBottom: '1px solid var(--border)'
           }}>Projects</a>
           <a href="#services" onClick={closeMenu} style={{
-            color: '#C9F04B',
+            color: 'var(--accent)',
             padding: '12px 0',
-            borderBottom: '1px solid #26262b'
+            borderBottom: '1px solid var(--border)'
           }}>Services</a>
           <a href="#pricing" onClick={closeMenu} style={{
-            color: '#C9F04B',
+            color: 'var(--accent)',
             padding: '12px 0',
-            borderBottom: '1px solid #26262b'
+            borderBottom: '1px solid var(--border)'
           }}>Pricing</a>
           <a href="#contact" onClick={closeMenu} style={{
             display: 'flex',
             alignItems: 'center',
             padding: '12px 16px',
-            background: '#C9F04B',
-            color: '#0D0D0F',
+            background: 'var(--accent)',
+            color: 'var(--accent-dark)',
             fontWeight: 700,
             borderRadius: '4px',
             marginTop: '8px',
@@ -137,7 +170,7 @@ const Hero = () => (
     alignItems: 'center',
     padding: 'clamp(40px, 7vh, 80px) clamp(20px, 5vw, 64px)',
     overflow: 'hidden',
-    borderBottom: '1px solid #26262b'
+    borderBottom: '1px solid var(--border)'
   }}>
     <img src="/assets/neon-night.jpg" alt="Neon-lit night street" style={{
       position: 'absolute',
@@ -157,7 +190,7 @@ const Hero = () => (
     <div className="dd-flash" style={{
       position: 'absolute',
       inset: 0,
-      background: 'radial-gradient(60% 80% at 78% 20%, rgba(201,240,75,0.5), transparent 60%)',
+      background: 'radial-gradient(60% 80% at 78% 20%, var(--accent), transparent 60%)',
       pointerEvents: 'none',
       animation: 'ddFlash 2.4s ease-out 0.3s 1 both'
     }}></div>
@@ -182,7 +215,7 @@ const Hero = () => (
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.12em',
-        color: '#C9F04B',
+        color: 'var(--accent)',
         marginBottom: '24px'
       }}>// Phoenix, AZ — web development studio</div>
 
@@ -190,7 +223,7 @@ const Hero = () => (
 
       <p style={{
         fontSize: 'clamp(16px, 2vw, 20px)',
-        color: '#8A8A93',
+        color: 'var(--text-secondary)',
         maxWidth: '540px',
         marginBottom: '34px'
       }}>Custom-built web apps for small service businesses — booking, reviews, galleries, and an admin panel you actually control. Shipped in weeks, not months.</p>
@@ -200,8 +233,8 @@ const Hero = () => (
           display: 'inline-flex',
           alignItems: 'center',
           padding: '14px 26px',
-          background: '#C9F04B',
-          color: '#0D0D0F',
+          background: 'var(--accent)',
+          color: 'var(--accent-dark)',
           fontWeight: 700,
           borderRadius: '5px',
           fontFamily: "'JetBrains Mono'",
@@ -212,10 +245,10 @@ const Hero = () => (
           alignItems: 'center',
           padding: '14px 26px',
           background: 'transparent',
-          color: '#F2F2F0',
+          color: 'var(--text-primary)',
           fontWeight: 600,
           borderRadius: '5px',
-          border: '1px solid #3a3a41',
+          border: '1px solid var(--border-light)',
           fontFamily: "'JetBrains Mono'",
           fontSize: '14px'
         }}>View work</a>
@@ -227,11 +260,11 @@ const Hero = () => (
             fontFamily: "'JetBrains Mono'",
             fontWeight: 700,
             fontSize: 'clamp(26px, 3vw, 38px)',
-            color: '#C9F04B'
+            color: 'var(--accent)'
           }}>2–4 wks</div>
           <div style={{
             fontSize: '12.5px',
-            color: '#8A8A93',
+            color: 'var(--text-secondary)',
             fontFamily: "'JetBrains Mono'",
             marginTop: '4px'
           }}>typical turnaround</div>
@@ -241,11 +274,11 @@ const Hero = () => (
             fontFamily: "'JetBrains Mono'",
             fontWeight: 700,
             fontSize: 'clamp(26px, 3vw, 38px)',
-            color: '#C9F04B'
+            color: 'var(--accent)'
           }}>&lt;1s</div>
           <div style={{
             fontSize: '12.5px',
-            color: '#8A8A93',
+            color: 'var(--text-secondary)',
             fontFamily: "'JetBrains Mono'",
             marginTop: '4px'
           }}>first-load target</div>
@@ -255,11 +288,11 @@ const Hero = () => (
             fontFamily: "'JetBrains Mono'",
             fontWeight: 700,
             fontSize: 'clamp(26px, 3vw, 38px)',
-            color: '#C9F04B'
+            color: 'var(--accent)'
           }}>100%</div>
           <div style={{
             fontSize: '12.5px',
-            color: '#8A8A93',
+            color: 'var(--text-secondary)',
             fontFamily: "'JetBrains Mono'",
             marginTop: '4px'
           }}>client-managed</div>
@@ -272,14 +305,14 @@ const Hero = () => (
 const Services = () => (
   <section id="services" style={{
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-    borderBottom: '1px solid #26262b'
+    borderBottom: '1px solid var(--border)'
   }}>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.1em',
-        color: '#C9F04B'
+        color: 'var(--accent)'
       }}>01 / services</span>
 
       <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Everything your site needs to run itself.</h2>
@@ -289,23 +322,23 @@ const Services = () => (
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '1px',
         background: '#26262b',
-        border: '1px solid #26262b',
+        border: '1px solid var(--border)',
         borderRadius: '12px',
         overflow: 'hidden'
       }}>
         {['Custom web app builds', 'Admin dashboards', 'Maintenance & retainers', 'Add-ons on demand'].map((title, i) => (
           <div key={i} style={{
-            background: '#161619',
+            background: 'var(--bg-secondary)',
             padding: '30px'
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
               fontSize: '12px',
-              color: '#C9F04B',
+              color: 'var(--accent)',
               marginBottom: '14px'
             }}>[{String(i + 1).padStart(2, '0')}]</div>
             <div style={{ fontWeight: 700, fontSize: '18px', marginBottom: '8px' }}>{title}</div>
-            <p style={{ fontSize: '14px', color: '#8A8A93' }}>
+            <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
               {i === 0 && 'A site built around how your business actually works — not squeezed into a template.'}
               {i === 1 && 'Change prices, hours, reviews, and photos yourself. No developer required.'}
               {i === 2 && 'We keep it fast, secure, and up to date so you can forget it exists.'}
@@ -321,14 +354,14 @@ const Services = () => (
 const CaseStudy = () => (
   <section id="work" style={{
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-    borderBottom: '1px solid #26262b'
+    borderBottom: '1px solid var(--border)'
   }}>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.1em',
-        color: '#C9F04B'
+        color: 'var(--accent)'
       }}>02 / projects</span>
 
       <h2 style={{ margin: '14px 0 44px' }}>Sadie's Pet Care</h2>
@@ -348,7 +381,7 @@ const CaseStudy = () => (
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#8A8A93',
+          color: 'var(--text-secondary)',
           fontFamily: "'JetBrains Mono'",
           fontSize: '14px'
         }}>
@@ -356,7 +389,7 @@ const CaseStudy = () => (
         </div>
 
         {/* Features */}
-        <div style={{ background: '#161619', padding: '30px' }}>
+        <div style={{ background: 'var(--bg-secondary)', padding: '30px' }}>
           <div style={{ marginBottom: '24px' }}>
             <a href="https://example.com" style={{
               fontFamily: "'JetBrains Mono'",
@@ -375,8 +408,8 @@ const CaseStudy = () => (
             }}>
               <span>{feature}</span>
               <span style={{
-                background: '#C9F04B',
-                color: '#0D0D0F',
+                background: 'var(--accent)',
+                color: 'var(--accent-dark)',
                 fontFamily: "'JetBrains Mono'",
                 fontSize: '11px',
                 fontWeight: 700,
@@ -394,14 +427,14 @@ const CaseStudy = () => (
 const Pricing = () => (
   <section id="pricing" style={{
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-    borderBottom: '1px solid #26262b'
+    borderBottom: '1px solid var(--border)'
   }}>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.1em',
-        color: '#C9F04B'
+        color: 'var(--accent)'
       }}>03 / pricing</span>
 
       <h2 style={{ margin: '14px 0 44px' }}>Transparent, flat pricing.</h2>
@@ -411,7 +444,7 @@ const Pricing = () => (
         gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
         gap: '1px',
         background: '#26262b',
-        border: '1px solid #26262b',
+        border: '1px solid var(--border)',
         borderRadius: '12px',
         overflow: 'hidden'
       }}>
@@ -421,7 +454,7 @@ const Pricing = () => (
           { name: 'Maintenance', price: '$150/mo+', desc: 'ongoing', tag: null }
         ].map((tier, i) => (
           <div key={i} style={{
-            background: '#161619',
+            background: 'var(--bg-secondary)',
             padding: '30px',
             border: tier.highlight ? '1px solid #C9F04B' : 'none',
             boxShadow: tier.highlight ? 'inset 0 0 0 1px #C9F04B' : 'none',
@@ -433,13 +466,13 @@ const Pricing = () => (
                 top: '0',
                 left: '50%',
                 transform: 'translateX(-50%) translateY(-50%)',
-                background: '#0D0D0F',
+                background: 'var(--bg-primary)',
                 padding: '4px 12px',
                 borderRadius: '3px',
                 fontSize: '11px',
                 fontWeight: 700,
                 fontFamily: "'JetBrains Mono'",
-                color: '#C9F04B',
+                color: 'var(--accent)',
                 border: '1px solid #C9F04B'
               }}>{tier.tag}</div>
             )}
@@ -449,10 +482,10 @@ const Pricing = () => (
                 fontFamily: "'JetBrains Mono'",
                 fontSize: '36px',
                 fontWeight: 700,
-                color: '#C9F04B',
+                color: 'var(--accent)',
                 marginBottom: '8px'
               }}>{tier.price}</div>
-              <p style={{ fontSize: '14px', color: '#8A8A93' }}>{tier.desc}</p>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{tier.desc}</p>
             </div>
           </div>
         ))}
@@ -464,14 +497,14 @@ const Pricing = () => (
 const Process = () => (
   <section style={{
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-    borderBottom: '1px solid #26262b'
+    borderBottom: '1px solid var(--border)'
   }}>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.1em',
-        color: '#C9F04B'
+        color: 'var(--accent)'
       }}>04 / process</span>
 
       <h2 style={{ margin: '14px 0 44px' }}>How we work together.</h2>
@@ -481,20 +514,20 @@ const Process = () => (
         gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         gap: '1px',
         background: '#26262b',
-        border: '1px solid #26262b',
+        border: '1px solid var(--border)',
         borderRadius: '12px',
         overflow: 'hidden'
       }}>
         {['We talk', 'Design', 'Build', 'Launch & hand off'].map((step, i) => (
           <div key={i} style={{
-            background: '#161619',
+            background: 'var(--bg-secondary)',
             padding: '30px',
             textAlign: 'left'
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
               fontSize: '12px',
-              color: '#C9F04B',
+              color: 'var(--accent)',
               marginBottom: '14px'
             }}>Step {String(i + 1).padStart(2, '0')}</div>
             <div style={{ fontWeight: 700, fontSize: '18px' }}>{step}</div>
@@ -560,21 +593,21 @@ const Contact = () => {
     return (
       <section id="contact" style={{
         padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-        borderBottom: '1px solid #26262b'
+        borderBottom: '1px solid var(--border)'
       }}>
         <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
           <span style={{
             fontFamily: "'JetBrains Mono'",
             fontSize: '12.5px',
             letterSpacing: '0.1em',
-            color: '#C9F04B'
+            color: 'var(--accent)'
           }}>05 / contact</span>
 
           <div style={{
             maxWidth: '760px',
             margin: '44px auto 0',
-            background: '#161619',
-            border: '1px solid #26262b',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border)',
             borderRadius: '6px',
             padding: '40px',
             textAlign: 'center'
@@ -584,7 +617,7 @@ const Contact = () => {
               marginBottom: '24px'
             }}>✓</div>
             <h2>Received, {submittedName}.</h2>
-            <p style={{ color: '#8A8A93', marginTop: '16px' }}>We'll be in touch within a day.</p>
+            <p style={{ color: 'var(--text-secondary)', marginTop: '16px' }}>We'll be in touch within a day.</p>
           </div>
         </div>
       </section>
@@ -594,7 +627,7 @@ const Contact = () => {
   return (
     <section id="contact" style={{
       padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-      borderBottom: '1px solid #26262b',
+      borderBottom: '1px solid var(--border)',
       position: 'relative'
     }}>
       <img src="/assets/prism.jpg" alt="" style={{
@@ -612,15 +645,15 @@ const Contact = () => {
           fontFamily: "'JetBrains Mono'",
           fontSize: '12.5px',
           letterSpacing: '0.1em',
-          color: '#C9F04B'
+          color: 'var(--accent)'
         }}>05 / contact</span>
 
         <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Let's talk about your project.</h2>
 
         <form onSubmit={handleSubmit} name="contact" style={{
           maxWidth: '760px',
-          background: '#161619',
-          border: '1px solid #26262b',
+          background: 'var(--bg-secondary)',
+          border: '1px solid var(--border)',
           borderRadius: '12px',
           padding: '40px',
           position: 'relative',
@@ -633,20 +666,20 @@ const Contact = () => {
               fontSize: '12.5px',
               letterSpacing: '0.1em',
               marginBottom: '8px',
-              color: errors.name ? '#C9F04B' : '#F2F2F0'
+              color: errors.name ? 'var(--accent)' : 'var(--text-primary)'
             }}>Name</label>
             <input type="text" name="name" value={form.name} onChange={handleChange} style={{
               width: '100%',
-              background: '#0D0D0F',
-              border: errors.name ? '1px solid #C9F04B' : '1px solid #26262b',
+              background: 'var(--bg-primary)',
+              border: errors.name ? '1px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '4px',
               padding: '12px',
-              color: '#F2F2F0',
+              color: 'var(--text-primary)',
               fontFamily: 'Inter'
             }} />
             {errors.name && (
               <div style={{
-                color: '#C9F04B',
+                color: 'var(--accent)',
                 fontSize: '12px',
                 marginTop: '4px',
                 fontFamily: "'JetBrains Mono'"
@@ -664,11 +697,11 @@ const Contact = () => {
             }}>Business type</label>
             <input type="text" name="biz" value={form.biz} onChange={handleChange} style={{
               width: '100%',
-              background: '#0D0D0F',
-              border: '1px solid #26262b',
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border)',
               borderRadius: '4px',
               padding: '12px',
-              color: '#F2F2F0',
+              color: 'var(--text-primary)',
               fontFamily: 'Inter'
             }} />
           </div>
@@ -680,20 +713,20 @@ const Contact = () => {
               fontSize: '12.5px',
               letterSpacing: '0.1em',
               marginBottom: '8px',
-              color: errors.email ? '#C9F04B' : '#F2F2F0'
+              color: errors.email ? 'var(--accent)' : 'var(--text-primary)'
             }}>Email</label>
             <input type="email" name="email" value={form.email} onChange={handleChange} style={{
               width: '100%',
-              background: '#0D0D0F',
-              border: errors.email ? '1px solid #C9F04B' : '1px solid #26262b',
+              background: 'var(--bg-primary)',
+              border: errors.email ? '1px solid var(--accent)' : '1px solid var(--border)',
               borderRadius: '4px',
               padding: '12px',
-              color: '#F2F2F0',
+              color: 'var(--text-primary)',
               fontFamily: 'Inter'
             }} />
             {errors.email && (
               <div style={{
-                color: '#C9F04B',
+                color: 'var(--accent)',
                 fontSize: '12px',
                 marginTop: '4px',
                 fontFamily: "'JetBrains Mono'"
@@ -711,11 +744,11 @@ const Contact = () => {
             }}>What do you need?</label>
             <textarea name="msg" value={form.msg} onChange={handleChange} style={{
               width: '100%',
-              background: '#0D0D0F',
-              border: '1px solid #26262b',
+              background: 'var(--bg-primary)',
+              border: '1px solid var(--border)',
               borderRadius: '4px',
               padding: '12px',
-              color: '#F2F2F0',
+              color: 'var(--text-primary)',
               fontFamily: 'Inter',
               minHeight: '120px',
               resize: 'vertical'
@@ -726,8 +759,8 @@ const Contact = () => {
             display: 'inline-flex',
             alignItems: 'center',
             padding: '14px 26px',
-            background: '#C9F04B',
-            color: '#0D0D0F',
+            background: 'var(--accent)',
+            color: 'var(--accent-dark)',
             fontWeight: 700,
             borderRadius: '5px',
             fontFamily: "'JetBrains Mono'",
@@ -744,25 +777,25 @@ const Contact = () => {
 const Footer = () => (
   <footer style={{
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
-    background: '#0D0D0F',
-    borderTop: '1px solid #26262b'
+    background: 'var(--bg-primary)',
+    borderTop: '1px solid var(--border)'
   }}>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '48px', marginBottom: '48px' }}>
         <div>
           <Logo width={100} />
-          <p style={{ color: '#8A8A93', fontSize: '14px', marginTop: '16px' }}>Phoenix, AZ — built local, built to last.</p>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '16px' }}>Phoenix, AZ — built local, built to last.</p>
         </div>
         <div>
-          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: '#8A8A93', marginBottom: '12px' }}>EMAIL</div>
+          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>EMAIL</div>
           <a href="mailto:hello@desertdigital.dev" style={{ fontSize: '14px' }}>hello@desertdigital.dev</a>
         </div>
         <div>
-          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: '#8A8A93', marginBottom: '12px' }}>PHONE</div>
+          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>PHONE</div>
           <a href="tel:+16025550142" style={{ fontSize: '14px' }}>(602) 555-0142</a>
         </div>
         <div>
-          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: '#8A8A93', marginBottom: '12px' }}>FOLLOW</div>
+          <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>FOLLOW</div>
           <div style={{ display: 'flex', gap: '16px', fontSize: '14px' }}>
             <a href="https://instagram.com">Instagram</a>
             <a href="https://linkedin.com">LinkedIn</a>
@@ -770,10 +803,10 @@ const Footer = () => (
         </div>
       </div>
       <div style={{
-        borderTop: '1px solid #26262b',
+        borderTop: '1px solid var(--border)',
         paddingTop: '24px',
         fontSize: '12px',
-        color: '#5a5a61',
+        color: 'var(--text-muted)',
         textAlign: 'center'
       }}>
         © 2026 Desert Digital. All rights reserved.
@@ -783,9 +816,22 @@ const Footer = () => (
 )
 
 export default function App() {
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme')
+    return saved === null ? true : saved === 'dark'
+  })
+
+  useEffect(() => {
+    const theme = isDark ? 'dark' : 'light'
+    localStorage.setItem('theme', theme)
+    document.documentElement.setAttribute('data-theme', isDark ? '' : 'light')
+  }, [isDark])
+
+  const toggleTheme = () => setIsDark(!isDark)
+
   return (
-    <div style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', background: '#0D0D0F' }}>
-      <Nav />
+    <div style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', background: 'var(--bg-primary)' }}>
+      <Nav isDark={isDark} toggleTheme={toggleTheme} />
       <Hero />
       <Services />
       <CaseStudy />
