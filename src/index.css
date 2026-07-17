@@ -121,6 +121,120 @@ p {
   }
 }
 
+@keyframes ddFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dd-fade-up {
+  animation: ddFadeUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Scroll reveal */
+.dd-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.dd-reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Card hover lift */
+.dd-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dd-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px -10px rgba(0, 0, 0, 0.55);
+}
+
+/* Button hover */
+.dd-btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dd-btn:hover {
+  transform: translateY(-2px);
+}
+
+.dd-btn-fill:hover {
+  box-shadow: 0 10px 24px -8px var(--glow);
+}
+
+.dd-btn-ghost:hover {
+  border-color: var(--accent) !important;
+}
+
+/* Live tag pulse */
+.dd-live-tag {
+  animation: ddPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes ddPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(201, 240, 75, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(201, 240, 75, 0);
+  }
+}
+
+/* Nav link underline */
+.dd-nav-link {
+  position: relative;
+}
+
+.dd-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s ease;
+}
+
+.dd-nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+/* FAQ accordion smooth expand */
+.dd-faq-answer-wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s ease;
+}
+
+.dd-faq-answer-wrap.is-open {
+  grid-template-rows: 1fr;
+}
+
+.dd-faq-answer-inner {
+  overflow: hidden;
+}
+
+.dd-faq-icon {
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.dd-faq-icon.is-open {
+  transform: rotate(45deg);
+}
+
 /* Navigation responsive */
 @media (max-width: 768px) {
   [data-nav-desktop] {

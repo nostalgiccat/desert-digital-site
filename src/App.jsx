@@ -1,5 +1,45 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import './App.css'
+
+const Reveal = ({ children, delay = 0 }) => {
+  const ref = useRef(null)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setVisible(true)
+      return
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.12 }
+    )
+    observer.observe(el)
+    // Safety net: never leave content permanently invisible if the
+    // observer fails to fire for any reason.
+    const fallback = setTimeout(() => setVisible(true), 2000)
+    return () => {
+      observer.disconnect()
+      clearTimeout(fallback)
+    }
+  }, [])
+
+  return (
+    <div
+      ref={ref}
+      className={`dd-reveal${visible ? ' is-visible' : ''}`}
+      style={{ transitionDelay: `${delay}ms` }}
+    >
+      {children}
+    </div>
+  )
+}
 
 const Logo = ({ width = 116 }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', lineHeight: 1 }}>
@@ -44,11 +84,11 @@ const Nav = () => {
         fontFamily: "'JetBrains Mono'",
         fontSize: '13px'
       }}>
-        <a href="#work" style={{ color: 'var(--text-secondary)' }}>Projects</a>
-        <a href="#services" style={{ color: 'var(--text-secondary)' }}>Services</a>
-        <a href="#pricing" style={{ color: 'var(--text-secondary)' }}>Pricing</a>
-        <a href="#faq" style={{ color: 'var(--text-secondary)' }}>FAQ</a>
-        <a href="#contact" style={{
+        <a href="#work" className="dd-nav-link" style={{ color: 'var(--text-secondary)' }}>Projects</a>
+        <a href="#services" className="dd-nav-link" style={{ color: 'var(--text-secondary)' }}>Services</a>
+        <a href="#pricing" className="dd-nav-link" style={{ color: 'var(--text-secondary)' }}>Pricing</a>
+        <a href="#faq" className="dd-nav-link" style={{ color: 'var(--text-secondary)' }}>FAQ</a>
+        <a href="#contact" className="dd-btn dd-btn-fill" style={{
           display: 'inline-flex',
           alignItems: 'center',
           padding: '8px 16px',
@@ -184,25 +224,27 @@ const Hero = () => (
     </svg>
 
     <div style={{ position: 'relative', maxWidth: '820px', zIndex: 2 }}>
-      <div style={{
+      <div className="dd-fade-up" style={{
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.12em',
         color: 'var(--accent)',
-        marginBottom: '24px'
+        marginBottom: '24px',
+        animationDelay: '100ms'
       }}>// Phoenix, AZ — web development studio</div>
 
-      <h1 style={{ marginBottom: '24px' }}>Real websites for real local businesses.</h1>
+      <h1 className="dd-fade-up" style={{ marginBottom: '24px', animationDelay: '200ms' }}>Real websites for real local businesses.</h1>
 
-      <p style={{
+      <p className="dd-fade-up" style={{
         fontSize: 'clamp(16px, 2vw, 20px)',
         color: 'var(--text-secondary)',
         maxWidth: '540px',
-        marginBottom: '34px'
+        marginBottom: '34px',
+        animationDelay: '320ms'
       }}>Custom-built web apps for small service businesses — booking, reviews, galleries, and an admin panel you actually control. Shipped in weeks, not months.</p>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '52px' }}>
-        <a href="#contact" style={{
+      <div className="dd-fade-up" style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginBottom: '52px', animationDelay: '440ms' }}>
+        <a href="#contact" className="dd-btn dd-btn-fill" style={{
           display: 'inline-flex',
           alignItems: 'center',
           padding: '14px 26px',
@@ -213,7 +255,7 @@ const Hero = () => (
           fontFamily: "'JetBrains Mono'",
           fontSize: '14px'
         }}>Start a project</a>
-        <a href="#work" style={{
+        <a href="#work" className="dd-btn dd-btn-ghost" style={{
           display: 'inline-flex',
           alignItems: 'center',
           padding: '14px 26px',
@@ -227,7 +269,7 @@ const Hero = () => (
         }}>View work</a>
       </div>
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(24px, 4vw, 52px)' }}>
+      <div className="dd-fade-up" style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(24px, 4vw, 52px)', animationDelay: '560ms' }}>
         <div>
           <div style={{
             fontFamily: "'JetBrains Mono'",
@@ -294,6 +336,7 @@ const Services = () => (
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
     borderBottom: '1px solid var(--border)'
   }}>
+    <Reveal>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
@@ -314,7 +357,7 @@ const Services = () => (
         overflow: 'hidden'
       }}>
         {['Custom web app builds', 'Admin dashboards', 'Maintenance & retainers', 'Add-ons on demand'].map((title, i) => (
-          <div key={i} style={{
+          <div key={i} className="dd-card" style={{
             background: 'var(--bg-secondary)',
             padding: '30px'
           }}>
@@ -335,6 +378,7 @@ const Services = () => (
         ))}
       </div>
     </div>
+    </Reveal>
   </section>
 )
 
@@ -343,6 +387,7 @@ const StarterKits = () => (
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
     borderBottom: '1px solid var(--border)'
   }}>
+    <Reveal>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
@@ -368,7 +413,7 @@ const StarterKits = () => (
           { name: 'Contractor Kit', features: ['Project gallery', 'Quote request form', 'Service area map'] },
           { name: 'Handyman Kit', features: ['Instant quote form', 'Service list & pricing', 'Review widget'] }
         ].map((kit, i) => (
-          <div key={i} style={{
+          <div key={i} className="dd-card" style={{
             background: 'var(--bg-secondary)',
             padding: '30px'
           }}>
@@ -397,6 +442,7 @@ const StarterKits = () => (
         ))}
       </div>
     </div>
+    </Reveal>
   </section>
 )
 
@@ -405,6 +451,7 @@ const CaseStudy = () => (
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
     borderBottom: '1px solid var(--border)'
   }}>
+    <Reveal>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
@@ -471,7 +518,7 @@ const CaseStudy = () => (
               borderBottom: i < 3 ? '1px solid #26262b' : 'none'
             }}>
               <span>{feature}</span>
-              <span style={{
+              <span className="dd-live-tag" style={{
                 background: 'var(--accent)',
                 color: 'var(--accent-dark)',
                 fontFamily: "'JetBrains Mono'",
@@ -489,6 +536,7 @@ const CaseStudy = () => (
         * Illustrative — pending confirmed numbers from the client.
       </p>
     </div>
+    </Reveal>
   </section>
 )
 
@@ -497,6 +545,7 @@ const Pricing = () => (
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
     borderBottom: '1px solid var(--border)'
   }}>
+    <Reveal>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
@@ -521,7 +570,7 @@ const Pricing = () => (
           { name: 'Full app build', price: '$4,200+', desc: 'one-time', tag: 'MOST BUILDS', highlight: true },
           { name: 'Maintenance', price: '$95/mo+', desc: 'ongoing', tag: null }
         ].map((tier, i) => (
-          <div key={i} style={{
+          <div key={i} className="dd-card" style={{
             background: 'var(--bg-secondary)',
             padding: '30px',
             border: tier.highlight ? '1px solid #C9F04B' : 'none',
@@ -570,7 +619,7 @@ const Pricing = () => (
         <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
           Prefer to talk it through first?
         </p>
-        <a href="#contact" style={{
+        <a href="#contact" className="dd-btn dd-btn-ghost" style={{
           display: 'inline-flex',
           alignItems: 'center',
           padding: '12px 22px',
@@ -608,6 +657,7 @@ const Pricing = () => (
         }}>Refer a business →</a>
       </div>
     </div>
+    </Reveal>
   </section>
 )
 
@@ -616,6 +666,7 @@ const Process = () => (
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
     borderBottom: '1px solid var(--border)'
   }}>
+    <Reveal>
     <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
       <span style={{
         fontFamily: "'JetBrains Mono'",
@@ -636,7 +687,7 @@ const Process = () => (
         overflow: 'hidden'
       }}>
         {['We talk', 'Design', 'Build', 'Launch & hand off'].map((step, i) => (
-          <div key={i} style={{
+          <div key={i} className="dd-card" style={{
             background: 'var(--bg-secondary)',
             padding: '30px',
             textAlign: 'left'
@@ -652,6 +703,7 @@ const Process = () => (
         ))}
       </div>
     </div>
+    </Reveal>
   </section>
 )
 
@@ -704,6 +756,7 @@ const SiteAudit = () => {
       padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
       borderBottom: '1px solid var(--border)'
     }}>
+      <Reveal>
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
         <span style={{
           fontFamily: "'JetBrains Mono'",
@@ -789,7 +842,7 @@ const SiteAudit = () => {
                 <div style={{ color: 'var(--accent)', fontSize: '12px', marginTop: '4px', fontFamily: "'JetBrains Mono'" }}>a valid email is required</div>
               )}
             </div>
-            <button type="submit" style={{
+            <button type="submit" className="dd-btn dd-btn-fill" style={{
               display: 'inline-flex',
               alignItems: 'center',
               padding: '14px 24px',
@@ -806,6 +859,7 @@ const SiteAudit = () => {
           </form>
         )}
       </div>
+      </Reveal>
     </section>
   )
 }
@@ -841,6 +895,7 @@ const FAQ = () => {
       padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
       borderBottom: '1px solid var(--border)'
     }}>
+      <Reveal>
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
         <span style={{
           fontFamily: "'JetBrains Mono'",
@@ -874,26 +929,29 @@ const FAQ = () => {
                   }}
                 >
                   <span style={{ fontWeight: 700, fontSize: '16px' }}>{item.q}</span>
-                  <span style={{
+                  <span className={`dd-faq-icon${isOpen ? ' is-open' : ''}`} style={{
                     fontFamily: "'JetBrains Mono'",
                     fontSize: '18px',
                     color: 'var(--accent)',
                     flexShrink: 0
-                  }}>{isOpen ? '−' : '+'}</span>
+                  }}>+</span>
                 </button>
-                {isOpen && (
-                  <p style={{
-                    fontSize: '14px',
-                    color: 'var(--text-secondary)',
-                    paddingBottom: '22px',
-                    maxWidth: '640px'
-                  }}>{item.a}</p>
-                )}
+                <div className={`dd-faq-answer-wrap${isOpen ? ' is-open' : ''}`}>
+                  <div className="dd-faq-answer-inner">
+                    <p style={{
+                      fontSize: '14px',
+                      color: 'var(--text-secondary)',
+                      paddingBottom: '22px',
+                      maxWidth: '640px'
+                    }}>{item.a}</p>
+                  </div>
+                </div>
               </div>
             )
           })}
         </div>
       </div>
+      </Reveal>
     </section>
   )
 }
@@ -963,7 +1021,7 @@ const Contact = () => {
             color: 'var(--accent)'
           }}>08 / contact</span>
 
-          <div style={{
+          <div className="dd-fade-up" style={{
             maxWidth: '760px',
             margin: '44px auto 0',
             background: 'var(--bg-secondary)',
@@ -1000,6 +1058,7 @@ const Contact = () => {
         pointerEvents: 'none'
       }} />
 
+      <Reveal>
       <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
         <span style={{
           fontFamily: "'JetBrains Mono'",
@@ -1115,7 +1174,7 @@ const Contact = () => {
             }} />
           </div>
 
-          <button type="submit" style={{
+          <button type="submit" className="dd-btn dd-btn-fill" style={{
             display: 'inline-flex',
             alignItems: 'center',
             padding: '14px 26px',
@@ -1130,6 +1189,7 @@ const Contact = () => {
           }}>Send message →</button>
         </form>
       </div>
+      </Reveal>
     </section>
   )
 }
@@ -1157,8 +1217,8 @@ const Footer = () => (
         <div>
           <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>FOLLOW</div>
           <div style={{ display: 'flex', gap: '16px', fontSize: '14px' }}>
-            <a href="https://instagram.com">Instagram</a>
-            <a href="https://linkedin.com">LinkedIn</a>
+            <a href="https://instagram.com" className="dd-nav-link">Instagram</a>
+            <a href="https://linkedin.com" className="dd-nav-link">LinkedIn</a>
           </div>
         </div>
       </div>
