@@ -47,6 +47,7 @@ const Nav = () => {
         <a href="#work" style={{ color: 'var(--text-secondary)' }}>Projects</a>
         <a href="#services" style={{ color: 'var(--text-secondary)' }}>Services</a>
         <a href="#pricing" style={{ color: 'var(--text-secondary)' }}>Pricing</a>
+        <a href="#faq" style={{ color: 'var(--text-secondary)' }}>FAQ</a>
         <a href="#contact" style={{
           display: 'inline-flex',
           alignItems: 'center',
@@ -112,6 +113,11 @@ const Nav = () => {
             padding: '12px 0',
             borderBottom: '1px solid var(--border)'
           }}>Pricing</a>
+          <a href="#faq" onClick={closeMenu} style={{
+            color: 'var(--accent)',
+            padding: '12px 0',
+            borderBottom: '1px solid var(--border)'
+          }}>FAQ</a>
           <a href="#contact" onClick={closeMenu} style={{
             display: 'flex',
             alignItems: 'center',
@@ -264,6 +270,20 @@ const Hero = () => (
             marginTop: '4px'
           }}>client-managed</div>
         </div>
+        <div>
+          <div style={{
+            fontFamily: "'JetBrains Mono'",
+            fontWeight: 700,
+            fontSize: 'clamp(26px, 3vw, 38px)',
+            color: 'var(--accent)'
+          }}>&lt;2 hrs</div>
+          <div style={{
+            fontSize: '12.5px',
+            color: 'var(--text-secondary)',
+            fontFamily: "'JetBrains Mono'",
+            marginTop: '4px'
+          }}>avg. response time</div>
+        </div>
       </div>
     </div>
   </header>
@@ -318,6 +338,68 @@ const Services = () => (
   </section>
 )
 
+const StarterKits = () => (
+  <section id="kits" style={{
+    padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
+    borderBottom: '1px solid var(--border)'
+  }}>
+    <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
+      <span style={{
+        fontFamily: "'JetBrains Mono'",
+        fontSize: '12.5px',
+        letterSpacing: '0.1em',
+        color: 'var(--accent)'
+      }}>02 / starter kits</span>
+
+      <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Built for your trade, not a generic template.</h2>
+
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+        gap: '1px',
+        background: '#26262b',
+        border: '1px solid var(--border)',
+        borderRadius: '12px',
+        overflow: 'hidden'
+      }}>
+        {[
+          { name: 'Pet Care Kit', features: ['Booking calendar', 'Client reviews', 'Photo gallery'] },
+          { name: 'Cleaning Kit', features: ['Instant quote calculator', 'Recurring booking', 'Before/after gallery'] },
+          { name: 'Contractor Kit', features: ['Project gallery', 'Quote request form', 'Service area map'] },
+          { name: 'Handyman Kit', features: ['Instant quote form', 'Service list & pricing', 'Review widget'] }
+        ].map((kit, i) => (
+          <div key={i} style={{
+            background: 'var(--bg-secondary)',
+            padding: '30px'
+          }}>
+            <div style={{
+              fontFamily: "'JetBrains Mono'",
+              fontSize: '12px',
+              color: 'var(--accent)',
+              marginBottom: '14px'
+            }}>[{String(i + 1).padStart(2, '0')}]</div>
+            <div style={{ fontWeight: 700, fontSize: '18px', marginBottom: '14px' }}>{kit.name}</div>
+            <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {kit.features.map((f, j) => (
+                <li key={j} style={{
+                  fontSize: '14px',
+                  color: 'var(--text-secondary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}>
+                  <span style={{ color: 'var(--accent)', fontFamily: "'JetBrains Mono'" }}>·</span>
+                  {f}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+)
+
 const CaseStudy = () => (
   <section id="work" style={{
     padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
@@ -329,9 +411,24 @@ const CaseStudy = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>02 / projects</span>
+      }}>03 / projects</span>
 
-      <h2 style={{ margin: '14px 0 44px' }}>Sadie's Pet Care</h2>
+      <h2 style={{ margin: '14px 0 20px' }}>Sadie's Pet Care</h2>
+
+      <div style={{
+        display: 'flex',
+        alignItems: 'baseline',
+        gap: '10px',
+        marginBottom: '44px'
+      }}>
+        <span style={{
+          fontFamily: "'JetBrains Mono'",
+          fontWeight: 700,
+          fontSize: 'clamp(22px, 2.4vw, 30px)',
+          color: 'var(--accent)'
+        }}>+40% booking conversion</span>
+        <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>in the first 60 days *</span>
+      </div>
 
       <div style={{
         display: 'grid',
@@ -387,6 +484,10 @@ const CaseStudy = () => (
           ))}
         </div>
       </div>
+
+      <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '16px' }}>
+        * Illustrative — pending confirmed numbers from the client.
+      </p>
     </div>
   </section>
 )
@@ -402,7 +503,7 @@ const Pricing = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>03 / pricing</span>
+      }}>04 / pricing</span>
 
       <h2 style={{ margin: '14px 0 44px' }}>Transparent, flat pricing.</h2>
 
@@ -457,6 +558,55 @@ const Pricing = () => (
           </div>
         ))}
       </div>
+
+      <div style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '16px',
+        marginTop: '32px'
+      }}>
+        <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+          Prefer to talk it through first?
+        </p>
+        <a href="#contact" style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          padding: '12px 22px',
+          background: 'transparent',
+          color: 'var(--text-primary)',
+          fontWeight: 600,
+          borderRadius: '5px',
+          border: '1px solid var(--border-light)',
+          fontFamily: "'JetBrains Mono'",
+          fontSize: '13px'
+        }}>Book a free 15-min call →</a>
+      </div>
+
+      <div style={{
+        marginTop: '28px',
+        padding: '20px 24px',
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border)',
+        borderRadius: '10px',
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '12px'
+      }}>
+        <p style={{ fontSize: '14px' }}>
+          <span style={{ color: 'var(--accent)', fontFamily: "'JetBrains Mono'", fontWeight: 700 }}>Know another local business?</span>{' '}
+          <span style={{ color: 'var(--text-secondary)' }}>Refer them and get a free month of maintenance.</span>
+        </p>
+        <a href="mailto:hello@desertdigital.dev?subject=Referral" style={{
+          fontFamily: "'JetBrains Mono'",
+          fontSize: '13px',
+          fontWeight: 700,
+          whiteSpace: 'nowrap'
+        }}>Refer a business →</a>
+      </div>
     </div>
   </section>
 )
@@ -472,7 +622,7 @@ const Process = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>04 / process</span>
+      }}>05 / process</span>
 
       <h2 style={{ margin: '14px 0 44px' }}>How we work together.</h2>
 
@@ -504,6 +654,249 @@ const Process = () => (
     </div>
   </section>
 )
+
+const SiteAudit = () => {
+  const [form, setForm] = useState({ url: '', email: '' })
+  const [errors, setErrors] = useState({ url: false, email: false })
+  const [submitted, setSubmitted] = useState(false)
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: false }))
+  }
+
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const validateUrl = (url) => url.trim().length > 3 && /\./.test(url)
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    const newErrors = {}
+
+    if (!validateUrl(form.url)) newErrors.url = true
+    if (!validateEmail(form.email)) newErrors.email = true
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      return
+    }
+
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'audit',
+          url: form.url,
+          email: form.email
+        })
+      })
+
+      if (response.ok) setSubmitted(true)
+    } catch (err) {
+      console.error('Audit form submission error:', err)
+      setSubmitted(true)
+    }
+  }
+
+  return (
+    <section id="audit" style={{
+      padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
+      borderBottom: '1px solid var(--border)'
+    }}>
+      <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
+        <span style={{
+          fontFamily: "'JetBrains Mono'",
+          fontSize: '12.5px',
+          letterSpacing: '0.1em',
+          color: 'var(--accent)'
+        }}>06 / free audit</span>
+
+        <h2 style={{ margin: '14px 0 14px', maxWidth: '620px' }}>See what your current site is costing you.</h2>
+
+        <p style={{ fontSize: '15px', color: 'var(--text-secondary)', maxWidth: '540px', marginBottom: '32px' }}>
+          Drop your URL below — we'll send a free teardown covering load speed, mobile experience, and missing booking/lead capture, within one business day.
+        </p>
+
+        {submitted ? (
+          <div style={{
+            maxWidth: '620px',
+            background: 'var(--bg-secondary)',
+            border: '1px solid var(--border)',
+            borderRadius: '12px',
+            padding: '32px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '20px'
+          }}>
+            <div style={{
+              fontSize: '28px',
+              color: 'var(--accent)',
+              flexShrink: 0
+            }}>✓</div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '16px', marginBottom: '4px' }}>Audit requested.</div>
+              <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>We'll email your teardown within one business day.</p>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} name="audit" style={{
+            maxWidth: '620px',
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '12px',
+            alignItems: 'flex-start'
+          }}>
+            <div style={{ flex: '1 1 220px' }}>
+              <input
+                type="text"
+                name="url"
+                placeholder="yourbusiness.com"
+                value={form.url}
+                onChange={handleChange}
+                style={{
+                  width: '100%',
+                  background: 'var(--bg-secondary)',
+                  border: errors.url ? '1px solid var(--accent)' : '1px solid var(--border)',
+                  borderRadius: '4px',
+                  padding: '14px',
+                  color: 'var(--text-primary)',
+                  fontFamily: 'Inter'
+                }}
+              />
+              {errors.url && (
+                <div style={{ color: 'var(--accent)', fontSize: '12px', marginTop: '4px', fontFamily: "'JetBrains Mono'" }}>a valid site URL is required</div>
+              )}
+            </div>
+            <div style={{ flex: '1 1 220px' }}>
+              <input
+                type="email"
+                name="email"
+                placeholder="you@business.com"
+                value={form.email}
+                onChange={handleChange}
+                style={{
+                  width: '100%',
+                  background: 'var(--bg-secondary)',
+                  border: errors.email ? '1px solid var(--accent)' : '1px solid var(--border)',
+                  borderRadius: '4px',
+                  padding: '14px',
+                  color: 'var(--text-primary)',
+                  fontFamily: 'Inter'
+                }}
+              />
+              {errors.email && (
+                <div style={{ color: 'var(--accent)', fontSize: '12px', marginTop: '4px', fontFamily: "'JetBrains Mono'" }}>a valid email is required</div>
+              )}
+            </div>
+            <button type="submit" style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '14px 24px',
+              background: 'var(--accent)',
+              color: 'var(--accent-dark)',
+              fontWeight: 700,
+              borderRadius: '5px',
+              fontFamily: "'JetBrains Mono'",
+              fontSize: '14px',
+              border: 'none',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap'
+            }}>Send my audit</button>
+          </form>
+        )}
+      </div>
+    </section>
+  )
+}
+
+const FAQ = () => {
+  const [openIndex, setOpenIndex] = useState(null)
+
+  const faqs = [
+    {
+      q: 'Why not just use Wix or Squarespace?',
+      a: "Template builders are fine for a digital business card. They fall apart once you need real logic — a booking calendar that checks availability, an admin panel only you can access, reviews pulled from your actual customers. That's custom app work, not a theme."
+    },
+    {
+      q: 'Do I own my website?',
+      a: "Yes — always. You own the code, the domain, and the login. If you ever want to leave, you take everything with you. No lock-in, no hostage situations."
+    },
+    {
+      q: 'What if I want to switch developers later?',
+      a: "You can, any time. Everything is handed off cleanly — hosting, domain, and admin access all stay in your name from day one."
+    },
+    {
+      q: 'How fast do you respond?',
+      a: "Within 2 hours during business hours, typically much faster. If something's broken, you're not waiting a week to hear back."
+    },
+    {
+      q: 'What happens if my site goes down?',
+      a: "Maintenance plans include monitoring — we know before you do, and it gets fixed fast. No maintenance plan still means a fast fix, just billed hourly."
+    }
+  ]
+
+  return (
+    <section id="faq" style={{
+      padding: 'clamp(56px, 9vh, 110px) clamp(20px, 5vw, 64px)',
+      borderBottom: '1px solid var(--border)'
+    }}>
+      <div style={{ maxWidth: '1180px', margin: '0 auto' }}>
+        <span style={{
+          fontFamily: "'JetBrains Mono'",
+          fontSize: '12.5px',
+          letterSpacing: '0.1em',
+          color: 'var(--accent)'
+        }}>07 / faq</span>
+
+        <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Questions worth asking before you hire anyone.</h2>
+
+        <div style={{ maxWidth: '780px' }}>
+          {faqs.map((item, i) => {
+            const isOpen = openIndex === i
+            return (
+              <div key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                <button
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '16px',
+                    padding: '22px 0',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    color: 'var(--text-primary)'
+                  }}
+                >
+                  <span style={{ fontWeight: 700, fontSize: '16px' }}>{item.q}</span>
+                  <span style={{
+                    fontFamily: "'JetBrains Mono'",
+                    fontSize: '18px',
+                    color: 'var(--accent)',
+                    flexShrink: 0
+                  }}>{isOpen ? '−' : '+'}</span>
+                </button>
+                {isOpen && (
+                  <p style={{
+                    fontSize: '14px',
+                    color: 'var(--text-secondary)',
+                    paddingBottom: '22px',
+                    maxWidth: '640px'
+                  }}>{item.a}</p>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 const Contact = () => {
   const [form, setForm] = useState({ name: '', biz: '', email: '', msg: '' })
@@ -568,7 +961,7 @@ const Contact = () => {
             fontSize: '12.5px',
             letterSpacing: '0.1em',
             color: 'var(--accent)'
-          }}>05 / contact</span>
+          }}>08 / contact</span>
 
           <div style={{
             maxWidth: '760px',
@@ -613,7 +1006,7 @@ const Contact = () => {
           fontSize: '12.5px',
           letterSpacing: '0.1em',
           color: 'var(--accent)'
-        }}>05 / contact</span>
+        }}>08 / contact</span>
 
         <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Let's talk about your project.</h2>
 
@@ -788,9 +1181,12 @@ export default function App() {
       <Nav />
       <Hero />
       <Services />
+      <StarterKits />
       <CaseStudy />
       <Pricing />
       <Process />
+      <SiteAudit />
+      <FAQ />
       <Contact />
       <Footer />
     </div>

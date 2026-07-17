@@ -8,12 +8,16 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- Hidden form for Netlify Forms detection -->
+    <!-- Hidden forms for Netlify Forms detection -->
     <form name="contact" netlify hidden>
       <input type="text" name="name" />
       <input type="text" name="email" />
       <input type="text" name="business" />
       <textarea name="message"></textarea>
+    </form>
+    <form name="audit" netlify hidden>
+      <input type="text" name="url" />
+      <input type="text" name="email" />
     </form>
     <script type="module" src="/src/main.jsx"></script>
   </body>
