@@ -176,6 +176,30 @@ p {
   opacity: 1;
 }
 
+/* Monsoon rain */
+.dd-rain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.dd-rain span {
+  position: absolute;
+  top: -140px;
+  width: 1px;
+  height: 90px;
+  background: linear-gradient(to bottom, transparent, rgba(201, 240, 75, 0.35));
+  transform: rotate(8deg);
+  animation: ddRain linear infinite;
+}
+
+@keyframes ddRain {
+  to {
+    transform: translateY(130vh) rotate(8deg);
+  }
+}
+
 /* Marquee ticker */
 .dd-marquee {
   overflow: hidden;
@@ -356,6 +380,10 @@ p {
   .dd-flash {
     animation: none !important;
     opacity: 0 !important;
+  }
+
+  .dd-rain {
+    display: none !important;
   }
 
   * {

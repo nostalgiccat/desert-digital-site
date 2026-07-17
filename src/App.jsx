@@ -146,6 +146,97 @@ const Marquee = () => (
   </div>
 )
 
+const RAIN_DROPS = Array.from({ length: 20 }, (_, i) => ({
+  left: `${(i * 5.3 + (i % 3) * 1.7) % 100}%`,
+  delay: `${(i * 0.41) % 2.6}s`,
+  duration: `${1.5 + (i % 5) * 0.28}s`,
+  opacity: 0.14 + (i % 4) * 0.06
+}))
+
+const Rain = () => (
+  <div className="dd-rain" aria-hidden="true">
+    {RAIN_DROPS.map((d, i) => (
+      <span key={i} style={{
+        left: d.left,
+        animationDelay: d.delay,
+        animationDuration: d.duration,
+        opacity: d.opacity
+      }} />
+    ))}
+  </div>
+)
+
+const ScrollProgress = () => {
+  const barRef = useRef(null)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const doc = document.documentElement
+      const progress = doc.scrollTop / (doc.scrollHeight - doc.clientHeight || 1)
+      if (barRef.current) barRef.current.style.transform = `scaleX(${progress})`
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  return (
+    <div ref={barRef} aria-hidden="true" style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '2px',
+      background: 'var(--accent)',
+      transformOrigin: 'left',
+      transform: 'scaleX(0)',
+      zIndex: 100,
+      pointerEvents: 'none'
+    }} />
+  )
+}
+
+const PhxClock = () => {
+  const [time, setTime] = useState('--:--:--')
+
+  useEffect(() => {
+    const update = () => setTime(
+      new Date().toLocaleTimeString('en-US', { timeZone: 'America/Phoenix', hour12: false })
+    )
+    update()
+    const id = setInterval(update, 1000)
+    return () => clearInterval(id)
+  }, [])
+
+  return (
+    <span style={{
+      fontFamily: "'JetBrains Mono'",
+      fontSize: '12.5px',
+      letterSpacing: '0.08em',
+      color: 'var(--accent)'
+    }}>PHX {time} MST</span>
+  )
+}
+
+const DesertHorizon = () => (
+  <div aria-hidden="true" style={{ background: 'var(--bg-primary)', lineHeight: 0 }}>
+    <svg viewBox="0 0 1440 110" preserveAspectRatio="none" style={{ width: '100%', height: 'clamp(60px, 8vw, 110px)', display: 'block' }}>
+      {/* Back ridge */}
+      <path d="M0 88 L150 88 L235 44 L390 44 L460 76 L620 76 L745 26 L890 26 L975 62 L1130 62 L1225 38 L1440 38"
+        fill="none" stroke="#26262b" strokeWidth="2" />
+      {/* Front ridge — echoes the logo mark */}
+      <path d="M0 100 L210 100 L295 64 L455 64 L535 90 L715 90 L830 48 L995 48 L1075 80 L1255 80 L1330 60 L1440 60"
+        fill="none" stroke="#F2F2F0" strokeWidth="2.5" />
+      {/* Saguaros */}
+      <g stroke="#C9F04B" strokeWidth="2.5" strokeLinecap="round" fill="none">
+        <path d="M330 100 L330 52 M330 76 L318 76 L318 62 M330 84 L342 84 L342 68" />
+        <path d="M1160 80 L1160 40 M1160 60 L1149 60 L1149 48 M1160 68 L1171 68 L1171 55" />
+        <path d="M620 90 L620 62 M620 76 L611 76 L611 67" />
+      </g>
+    </svg>
+  </div>
+)
+
 const Logo = ({ width = 116 }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', lineHeight: 1 }}>
     <span style={{
@@ -357,6 +448,8 @@ const Hero = () => {
         filter: 'drop-shadow(0 0 6px rgba(201,240,75,0.7))'
       }} />
     </svg>
+
+    <Rain />
 
     <div style={{ position: 'relative', maxWidth: '820px', zIndex: 2 }}>
       <div style={{
@@ -674,8 +767,30 @@ const CaseStudy = () => (
         </div>
       </div>
 
+      <blockquote style={{
+        marginTop: '28px',
+        padding: '28px 32px',
+        background: 'var(--bg-secondary)',
+        border: '1px solid var(--border)',
+        borderLeft: '3px solid var(--accent)',
+        borderRadius: '10px',
+        maxWidth: '780px'
+      }}>
+        <p style={{ fontSize: '16px', lineHeight: 1.6 }}>
+          "People find us and book without ever calling. I update prices and photos
+          myself in the morning before we open — no waiting on anyone."
+        </p>
+        <footer style={{
+          marginTop: '14px',
+          fontFamily: "'JetBrains Mono'",
+          fontSize: '12.5px',
+          letterSpacing: '0.08em',
+          color: 'var(--text-secondary)'
+        }}>— Sadie R. · <span style={{ color: 'var(--accent)' }}>Sadie's Pet Care</span> *</footer>
+      </blockquote>
+
       <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '16px' }}>
-        * Illustrative — pending confirmed numbers from the client.
+        * Illustrative — pending confirmed numbers and quote approval from the client.
       </p>
     </div>
     </Reveal>
@@ -1352,6 +1467,7 @@ const Footer = () => (
         <div>
           <Logo width={100} />
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '16px' }}>Phoenix, AZ — built local, built to last.</p>
+          <div style={{ marginTop: '12px' }}><PhxClock /></div>
         </div>
         <div>
           <div style={{ fontFamily: "'JetBrains Mono'", fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>EMAIL</div>
@@ -1399,6 +1515,7 @@ export default function App() {
 
   return (
     <div style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', background: 'var(--bg-primary)' }}>
+      <ScrollProgress />
       <Nav />
       <Hero />
       <Marquee />
@@ -1410,6 +1527,7 @@ export default function App() {
       <SiteAudit />
       <FAQ />
       <Contact />
+      <DesertHorizon />
       <Footer />
     </div>
   )
