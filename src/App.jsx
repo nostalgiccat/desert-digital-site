@@ -41,6 +41,111 @@ const Reveal = ({ children, delay = 0 }) => {
   )
 }
 
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+const Typewriter = ({ text, startDelay = 400, speed = 36 }) => {
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (prefersReducedMotion()) {
+      setCount(text.length)
+      return
+    }
+    let i = 0
+    let interval
+    const timer = setTimeout(() => {
+      interval = setInterval(() => {
+        i++
+        setCount(i)
+        if (i >= text.length) clearInterval(interval)
+      }, speed)
+    }, startDelay)
+    return () => {
+      clearTimeout(timer)
+      clearInterval(interval)
+    }
+  }, [text, startDelay, speed])
+
+  return (
+    <span aria-label={text}>
+      <span aria-hidden="true">{text.slice(0, count)}</span>
+      <span className="dd-cursor" aria-hidden="true"></span>
+    </span>
+  )
+}
+
+const SCRAMBLE_GLYPHS = '!<>-_\\/[]{}=+*^?#'
+
+const Scramble = ({ text }) => {
+  const ref = useRef(null)
+  const [display, setDisplay] = useState(text)
+  const started = useRef(false)
+  const intervalRef = useRef(null)
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return
+
+    const run = () => {
+      if (started.current) return
+      started.current = true
+      let frame = 0
+      const total = Math.max(text.length * 2, 18)
+      intervalRef.current = setInterval(() => {
+        frame++
+        const progress = frame / total
+        setDisplay(
+          text.split('').map((ch, idx) => {
+            if (ch === ' ' || ch === '/') return ch
+            if (idx < progress * text.length) return ch
+            return SCRAMBLE_GLYPHS[Math.floor(Math.random() * SCRAMBLE_GLYPHS.length)]
+          }).join('')
+        )
+        if (frame >= total) {
+          setDisplay(text)
+          clearInterval(intervalRef.current)
+        }
+      }, 28)
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          run()
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.5 }
+    )
+    observer.observe(el)
+    return () => {
+      observer.disconnect()
+      clearInterval(intervalRef.current)
+    }
+  }, [text])
+
+  return <span ref={ref} aria-label={text}><span aria-hidden="true">{display}</span></span>
+}
+
+const MARQUEE_ITEMS = [
+  'Custom web apps', 'Admin dashboards', 'Booking systems', 'Client reviews',
+  'Photo galleries', 'Online payments', 'Built in Phoenix', 'Shipped in weeks'
+]
+
+const Marquee = () => (
+  <div className="dd-marquee" aria-hidden="true">
+    <div className="dd-marquee-track">
+      {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+        <span key={i} className="dd-marquee-item">
+          {item}
+          <span style={{ color: 'var(--accent)', margin: '0 22px' }}>//</span>
+        </span>
+      ))}
+    </div>
+  </div>
+)
+
 const Logo = ({ width = 116 }) => (
   <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', lineHeight: 1 }}>
     <span style={{
@@ -175,8 +280,33 @@ const Nav = () => {
   )
 }
 
-const Hero = () => (
-  <header style={{
+const Hero = () => {
+  const [strikeKey, setStrikeKey] = useState(0)
+  const bgRef = useRef(null)
+  const boltRef = useRef(null)
+
+  // Re-strike the lightning every ~10s
+  useEffect(() => {
+    if (prefersReducedMotion()) return
+    const interval = setInterval(() => setStrikeKey(k => k + 1), 10000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const handleMouseMove = (e) => {
+    if (prefersReducedMotion()) return
+    const rect = e.currentTarget.getBoundingClientRect()
+    const dx = (e.clientX - rect.left) / rect.width - 0.5
+    const dy = (e.clientY - rect.top) / rect.height - 0.5
+    if (bgRef.current) {
+      bgRef.current.style.transform = `translate(${dx * -14}px, ${dy * -10}px) scale(1.05)`
+    }
+    if (boltRef.current) {
+      boltRef.current.style.transform = `translate(${dx * 16}px, ${dy * 12}px)`
+    }
+  }
+
+  return (
+  <header onMouseMove={handleMouseMove} style={{
     position: 'relative',
     minHeight: '86vh',
     display: 'flex',
@@ -185,13 +315,16 @@ const Hero = () => (
     overflow: 'hidden',
     borderBottom: '1px solid var(--border)'
   }}>
-    <img src="/assets/neon-night.jpg" alt="Neon-lit night street" style={{
+    <img ref={bgRef} src="/assets/neon-night.jpg" alt="Neon-lit night street" style={{
       position: 'absolute',
       inset: 0,
       width: '100%',
       height: '100%',
       objectFit: 'cover',
-      opacity: 0.42
+      opacity: 0.42,
+      transform: 'scale(1.05)',
+      transition: 'transform 0.4s ease-out',
+      willChange: 'transform'
     }} />
     <div style={{
       position: 'absolute',
@@ -200,7 +333,7 @@ const Hero = () => (
     }}></div>
 
     {/* Lightning flash */}
-    <div className="dd-flash" style={{
+    <div key={`flash-${strikeKey}`} className="dd-flash" style={{
       position: 'absolute',
       inset: 0,
       background: 'radial-gradient(60% 80% at 78% 20%, var(--accent), transparent 60%)',
@@ -209,13 +342,15 @@ const Hero = () => (
     }}></div>
 
     {/* Lightning bolt */}
-    <svg viewBox="0 0 500 900" preserveAspectRatio="xMidYMin slice" style={{
+    <svg key={`bolt-${strikeKey}`} ref={boltRef} viewBox="0 0 500 900" preserveAspectRatio="xMidYMin slice" style={{
       position: 'absolute',
       right: 0,
       top: 0,
       height: '100%',
       width: '44%',
-      pointerEvents: 'none'
+      pointerEvents: 'none',
+      transition: 'transform 0.4s ease-out',
+      willChange: 'transform'
     }} aria-hidden="true">
       <path className="dd-bolt" d="M330,20 L250,300 L340,320 L200,640 L280,600 L150,880" fill="none" stroke="#C9F04B" strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" strokeDasharray="1200" style={{
         animation: 'ddStrike 2.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s 1 both',
@@ -224,14 +359,14 @@ const Hero = () => (
     </svg>
 
     <div style={{ position: 'relative', maxWidth: '820px', zIndex: 2 }}>
-      <div className="dd-fade-up" style={{
+      <div style={{
         fontFamily: "'JetBrains Mono'",
         fontSize: '12.5px',
         letterSpacing: '0.12em',
         color: 'var(--accent)',
         marginBottom: '24px',
-        animationDelay: '100ms'
-      }}>// Phoenix, AZ — web development studio<span className="dd-cursor" aria-hidden="true"></span></div>
+        minHeight: '1.2em'
+      }}><Typewriter text="// Phoenix, AZ — web development studio" /></div>
 
       <h1 className="dd-fade-up" style={{ marginBottom: '24px', animationDelay: '200ms' }}>Real websites for real local businesses.</h1>
 
@@ -329,7 +464,8 @@ const Hero = () => (
       </div>
     </div>
   </header>
-)
+  )
+}
 
 const Services = () => (
   <section id="services" style={{
@@ -343,7 +479,7 @@ const Services = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>01 / services</span>
+      }}><Scramble text="01 / services" /></span>
 
       <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Everything your site needs to run itself.</h2>
 
@@ -397,7 +533,7 @@ const StarterKits = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>02 / starter kits</span>
+      }}><Scramble text="02 / starter kits" /></span>
 
       <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Built for your trade, not a generic template.</h2>
 
@@ -464,7 +600,7 @@ const CaseStudy = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>03 / projects</span>
+      }}><Scramble text="03 / projects" /></span>
 
       <h2 style={{ margin: '14px 0 20px' }}>Sadie's Pet Care</h2>
 
@@ -558,7 +694,7 @@ const Pricing = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>04 / pricing</span>
+      }}><Scramble text="04 / pricing" /></span>
 
       <h2 style={{ margin: '14px 0 44px' }}>Transparent, flat pricing.</h2>
 
@@ -681,7 +817,7 @@ const Process = () => (
         fontSize: '12.5px',
         letterSpacing: '0.1em',
         color: 'var(--accent)'
-      }}>05 / process</span>
+      }}><Scramble text="05 / process" /></span>
 
       <h2 style={{ margin: '14px 0 44px' }}>How we work together.</h2>
 
@@ -774,7 +910,7 @@ const SiteAudit = () => {
           fontSize: '12.5px',
           letterSpacing: '0.1em',
           color: 'var(--accent)'
-        }}>06 / free audit</span>
+        }}><Scramble text="06 / free audit" /></span>
 
         <h2 style={{ margin: '14px 0 14px', maxWidth: '620px' }}>See what your current site is costing you.</h2>
 
@@ -913,7 +1049,7 @@ const FAQ = () => {
           fontSize: '12.5px',
           letterSpacing: '0.1em',
           color: 'var(--accent)'
-        }}>07 / faq</span>
+        }}><Scramble text="07 / faq" /></span>
 
         <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Questions worth asking before you hire anyone.</h2>
 
@@ -1030,7 +1166,7 @@ const Contact = () => {
             fontSize: '12.5px',
             letterSpacing: '0.1em',
             color: 'var(--accent)'
-          }}>08 / contact</span>
+          }}><Scramble text="08 / contact" /></span>
 
           <div className="dd-fade-up" style={{
             maxWidth: '760px',
@@ -1076,7 +1212,7 @@ const Contact = () => {
           fontSize: '12.5px',
           letterSpacing: '0.1em',
           color: 'var(--accent)'
-        }}>08 / contact</span>
+        }}><Scramble text="08 / contact" /></span>
 
         <h2 style={{ margin: '14px 0 44px', maxWidth: '620px' }}>Let's talk about your project.</h2>
 
@@ -1247,10 +1383,25 @@ const Footer = () => (
 )
 
 export default function App() {
+  // Track cursor position over cards for the spotlight effect
+  useEffect(() => {
+    if (prefersReducedMotion()) return
+    const onMove = (e) => {
+      const card = e.target.closest?.('.dd-card')
+      if (!card) return
+      const rect = card.getBoundingClientRect()
+      card.style.setProperty('--mx', `${e.clientX - rect.left}px`)
+      card.style.setProperty('--my', `${e.clientY - rect.top}px`)
+    }
+    document.addEventListener('mousemove', onMove)
+    return () => document.removeEventListener('mousemove', onMove)
+  }, [])
+
   return (
     <div style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', background: 'var(--bg-primary)' }}>
       <Nav />
       <Hero />
+      <Marquee />
       <Services />
       <StarterKits />
       <CaseStudy />
