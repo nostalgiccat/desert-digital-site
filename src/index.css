@@ -14,17 +14,6 @@
   --glow: rgba(201, 240, 75, 0.7);
 }
 
-:root[data-theme="light"] {
-  --bg-primary: #F2F2F0;
-  --bg-secondary: #E8DCC8;
-  --border: #D0C4B8;
-  --border-light: #C4B8AC;
-  --text-primary: #0D0D0F;
-  --text-secondary: #3a3a41;
-  --text-muted: #6b6b73;
-  --blur-bg: rgba(242, 242, 240, 0.85);
-}
-
 * {
   box-sizing: border-box;
   margin: 0;
