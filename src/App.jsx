@@ -231,7 +231,7 @@ const Hero = () => (
         color: 'var(--accent)',
         marginBottom: '24px',
         animationDelay: '100ms'
-      }}>// Phoenix, AZ — web development studio</div>
+      }}>// Phoenix, AZ — web development studio<span className="dd-cursor" aria-hidden="true"></span></div>
 
       <h1 className="dd-fade-up" style={{ marginBottom: '24px', animationDelay: '200ms' }}>Real websites for real local businesses.</h1>
 
@@ -357,9 +357,11 @@ const Services = () => (
         overflow: 'hidden'
       }}>
         {['Custom web app builds', 'Admin dashboards', 'Maintenance & retainers', 'Add-ons on demand'].map((title, i) => (
-          <div key={i} className="dd-card" style={{
+          <Reveal key={i} delay={i * 90}>
+          <div className="dd-card" style={{
             background: 'var(--bg-secondary)',
-            padding: '30px'
+            padding: '30px',
+            height: '100%'
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
@@ -375,6 +377,7 @@ const Services = () => (
               {i === 3 && 'AI chat, automation, online ordering, payments — added when it earns its place.'}
             </p>
           </div>
+          </Reveal>
         ))}
       </div>
     </div>
@@ -413,9 +416,11 @@ const StarterKits = () => (
           { name: 'Contractor Kit', features: ['Project gallery', 'Quote request form', 'Service area map'] },
           { name: 'Handyman Kit', features: ['Instant quote form', 'Service list & pricing', 'Review widget'] }
         ].map((kit, i) => (
-          <div key={i} className="dd-card" style={{
+          <Reveal key={i} delay={i * 90}>
+          <div className="dd-card" style={{
             background: 'var(--bg-secondary)',
-            padding: '30px'
+            padding: '30px',
+            height: '100%'
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
@@ -439,6 +444,7 @@ const StarterKits = () => (
               ))}
             </ul>
           </div>
+          </Reveal>
         ))}
       </div>
     </div>
@@ -570,12 +576,13 @@ const Pricing = () => (
           { name: 'Full app build', price: '$4,200+', desc: 'one-time', tag: 'MOST BUILDS', highlight: true },
           { name: 'Maintenance', price: '$95/mo+', desc: 'ongoing', tag: null }
         ].map((tier, i) => (
-          <div key={i} className="dd-card" style={{
+          <Reveal key={i} delay={i * 90}>
+          <div className={`dd-card${tier.highlight ? ' dd-tier-glow' : ''}`} style={{
             background: 'var(--bg-secondary)',
             padding: '30px',
-            border: tier.highlight ? '1px solid #C9F04B' : 'none',
-            boxShadow: tier.highlight ? 'inset 0 0 0 1px #C9F04B' : 'none',
-            position: 'relative'
+            border: tier.highlight ? '1px solid var(--accent)' : 'none',
+            position: 'relative',
+            height: '100%'
           }}>
             {tier.tag && (
               <div style={{
@@ -605,6 +612,7 @@ const Pricing = () => (
               <p style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>{tier.desc}</p>
             </div>
           </div>
+          </Reveal>
         ))}
       </div>
 
@@ -687,10 +695,12 @@ const Process = () => (
         overflow: 'hidden'
       }}>
         {['We talk', 'Design', 'Build', 'Launch & hand off'].map((step, i) => (
-          <div key={i} className="dd-card" style={{
+          <Reveal key={i} delay={i * 90}>
+          <div className="dd-card" style={{
             background: 'var(--bg-secondary)',
             padding: '30px',
-            textAlign: 'left'
+            textAlign: 'left',
+            height: '100%'
           }}>
             <div style={{
               fontFamily: "'JetBrains Mono'",
@@ -700,6 +710,7 @@ const Process = () => (
             }}>Step {String(i + 1).padStart(2, '0')}</div>
             <div style={{ fontWeight: 700, fontSize: '18px' }}>{step}</div>
           </div>
+          </Reveal>
         ))}
       </div>
     </div>
