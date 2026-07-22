@@ -14,7 +14,7 @@
   --glow: rgba(201, 240, 75, 0.7);
 }
 
-* {
+.dd-site * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
