@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, CheckCircle2, Circle, BookOpen, Code, FileText, Brain, ExternalLink, Star, StickyNote, Flame, Printer, Target } from 'lucide-react';
+import { storage } from './studyStorage';
 import './study.css';
 
 // Base path for Professor Messer's free SY0-701 videos
@@ -32,22 +33,6 @@ const DOMAIN_NAMES = {
 const getObjectiveDomain = (title) => {
   const match = title.match(/\((\d)\.\d+\)/);
   return match ? parseInt(match[1], 10) : null;
-};
-
-// localStorage-backed storage shim (this app doesn't have the artifact sandbox's window.storage)
-const storage = {
-  get: (key) => {
-    const value = localStorage.getItem(key);
-    return Promise.resolve(value !== null ? { value } : null);
-  },
-  set: (key, value) => {
-    localStorage.setItem(key, value);
-    return Promise.resolve();
-  },
-  delete: (key) => {
-    localStorage.removeItem(key);
-    return Promise.resolve();
-  }
 };
 
 export default function SecurityPlusCurriculum() {
