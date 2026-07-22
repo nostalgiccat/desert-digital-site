@@ -20,6 +20,14 @@ const RESOURCES = [
   { label: "Messer's Course Notes & Practice Exams", url: PRACTICE_EXAMS, desc: 'Paid 96-page PDF notes + three 90-question practice exams.' }
 ];
 
+// Notion notebook — general database plus per-week entries as they get added.
+// Falls back to the general database link for any week without its own entry yet.
+const NOTION_NOTES_DB_URL = 'https://app.notion.com/p/8fc9a773b7544c8a8c0d9d2ea61ed8bd';
+const NOTION_WEEK_URLS = {
+  1: 'https://app.notion.com/p/3a5466b1ce4d814b9198db9a44e75844',
+};
+const getNotionUrlForWeek = (week) => NOTION_WEEK_URLS[week] || NOTION_NOTES_DB_URL;
+
 // Real CompTIA SY0-701 domain weights (per the official exam objectives)
 const DOMAIN_WEIGHTS = { 1: 12, 2: 22, 3: 18, 4: 28, 5: 20 };
 const DOMAIN_NAMES = {
@@ -44,8 +52,6 @@ export default function SecurityPlusCurriculum() {
   const [editingDate, setEditingDate] = useState(false);
   const [showResources, setShowResources] = useState(false);
   const [confidence, setConfidence] = useState({});
-  const [notes, setNotes] = useState({});
-  const [openNoteTaskId, setOpenNoteTaskId] = useState(null);
   const [showDomainBreakdown, setShowDomainBreakdown] = useState(false);
   const [showStreak, setShowStreak] = useState(false);
 
@@ -265,7 +271,6 @@ export default function SecurityPlusCurriculum() {
   const STORAGE_KEY = 'sec-plus-progress-v2';
   const EXAM_DATE_KEY = 'sec-plus-exam-date';
   const CONFIDENCE_KEY = 'sec-plus-confidence';
-  const NOTES_KEY = 'sec-plus-notes';
 
   // Build a fresh weeks array from the curriculum, applying any saved completion flags.
   const buildWeeks = (completedMap = {}) =>
@@ -298,12 +303,6 @@ export default function SecurityPlusCurriculum() {
         if (confResult && confResult.value) setConfidence(JSON.parse(confResult.value));
       } catch (err) {
         // No confidence ratings yet.
-      }
-      try {
-        const notesResult = await storage.get(NOTES_KEY);
-        if (notesResult && notesResult.value) setNotes(JSON.parse(notesResult.value));
-      } catch (err) {
-        // No notes yet.
       }
       setWeeks(buildWeeks(completedMap));
       setLoading(false);
@@ -340,17 +339,6 @@ export default function SecurityPlusCurriculum() {
       await storage.set(CONFIDENCE_KEY, JSON.stringify(updated));
     } catch (err) {
       console.error('Failed to save confidence rating:', err);
-    }
-  };
-
-  const saveNote = async (taskId, text) => {
-    const updated = { ...notes, [taskId]: text };
-    if (!text) delete updated[taskId];
-    setNotes(updated);
-    try {
-      await storage.set(NOTES_KEY, JSON.stringify(updated));
-    } catch (err) {
-      console.error('Failed to save note:', err);
     }
   };
 
@@ -535,7 +523,6 @@ export default function SecurityPlusCurriculum() {
               {week.tasks.map((t) => (
                 <li key={t.id}>
                   [{t.completed ? 'x' : ' '}] {t.title}{t.completed && t.completedDate ? ` — ${formatDate(t.completedDate)}` : ''}
-                  {notes[t.id] ? ` — note: ${notes[t.id]}` : ''}
                 </li>
               ))}
             </ul>
@@ -891,26 +878,16 @@ export default function SecurityPlusCurriculum() {
                               </button>
                             )}
 
-                            {/* Note Toggle */}
-                            <button
-                              onClick={() => setOpenNoteTaskId(openNoteTaskId === task.id ? null : task.id)}
+                            {/* Notes link */}
+                            <a
+                              href={getNotionUrlForWeek(week.week)}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className="text-sm text-gray-500 hover:text-gray-700 font-medium underline inline-flex items-center gap-1"
                             >
                               <StickyNote className="w-3.5 h-3.5" />
-                              {notes[task.id] ? 'Edit note' : 'Add note'}
-                            </button>
-                            {notes[task.id] && openNoteTaskId !== task.id && (
-                              <p className="text-xs text-gray-500 italic mt-1 bg-gray-50 rounded p-2">📝 {notes[task.id]}</p>
-                            )}
-                            {openNoteTaskId === task.id && (
-                              <textarea
-                                defaultValue={notes[task.id] || ''}
-                                onBlur={(e) => saveNote(task.id, e.target.value)}
-                                placeholder="Jot a quick note or gotcha for this one..."
-                                className="w-full mt-2 text-sm border border-gray-300 rounded p-2 text-gray-700"
-                                rows={2}
-                              />
-                            )}
+                              Notes ↗
+                            </a>
                           </div>
                         </div>
 

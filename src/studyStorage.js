@@ -8,13 +8,12 @@ const supabase = createClient(
 const ROW_ID = 'default';
 
 // Single shared row (no per-user accounts) — matches the password-gated,
-// single-study-hub scope of this feature. Maps the four localStorage keys
-// the curriculum component uses onto columns of that row.
+// single-study-hub scope of this feature. Maps the localStorage keys the
+// curriculum component uses onto columns of that row.
 const KEY_TO_COLUMN = {
   'sec-plus-progress-v2': 'progress',
   'sec-plus-exam-date': 'exam_date',
   'sec-plus-confidence': 'confidence',
-  'sec-plus-notes': 'notes',
 };
 
 export const storage = {
