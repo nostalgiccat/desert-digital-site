@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, CheckCircle2, Circle, BookOpen, Code, FileText, Brain, ExternalLink, Star, StickyNote, Flame, Printer, Target } from 'lucide-react';
+import './study.css';
 
+// Base path for Professor Messer's free SY0-701 videos
 const PM = 'https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/';
 const COURSE_INDEX = 'https://www.professormesser.com/security-plus/sy0-701/sy0-701-video/sy0-701-comptia-security-plus-course/';
 const PRACTICE_EXAMS = 'https://www.professormesser.com/sy0-701-success-bundle/';
 
+// Additional study resources
 const RESOURCES = [
   { label: 'Official SY0-701 Exam Objectives (PDF)', url: 'https://www.professormesser.com/objectives', desc: "CompTIA's official objectives list — the actual exam blueprint." },
   { label: 'Messer Study Group Replays', url: 'https://www.professormesser.com/security-plus/sy0-701/sy0-701-study-group/sy0-701-security-study-group-replays/', desc: 'Free recorded live Q&A sessions, organized by domain.' },
@@ -16,6 +19,7 @@ const RESOURCES = [
   { label: "Messer's Course Notes & Practice Exams", url: PRACTICE_EXAMS, desc: 'Paid 96-page PDF notes + three 90-question practice exams.' }
 ];
 
+// Real CompTIA SY0-701 domain weights (per the official exam objectives)
 const DOMAIN_WEIGHTS = { 1: 12, 2: 22, 3: 18, 4: 28, 5: 20 };
 const DOMAIN_NAMES = {
   1: 'General Security Concepts',
@@ -24,10 +28,26 @@ const DOMAIN_NAMES = {
   4: 'Security Operations',
   5: 'Security Program Management'
 };
-
+// Video titles carry their objective number in parentheses, e.g. "Firewalls (4.5)" — domain is the leading digit.
 const getObjectiveDomain = (title) => {
   const match = title.match(/\((\d)\.\d+\)/);
   return match ? parseInt(match[1], 10) : null;
+};
+
+// localStorage-backed storage shim (this app doesn't have the artifact sandbox's window.storage)
+const storage = {
+  get: (key) => {
+    const value = localStorage.getItem(key);
+    return Promise.resolve(value !== null ? { value } : null);
+  },
+  set: (key, value) => {
+    localStorage.setItem(key, value);
+    return Promise.resolve();
+  },
+  delete: (key) => {
+    localStorage.removeItem(key);
+    return Promise.resolve();
+  }
 };
 
 export default function SecurityPlusCurriculum() {
@@ -44,6 +64,10 @@ export default function SecurityPlusCurriculum() {
   const [showDomainBreakdown, setShowDomainBreakdown] = useState(false);
   const [showStreak, setShowStreak] = useState(false);
 
+  // Curriculum re-mapped to Professor Messer's ACTUAL SY0-701 videos.
+  // Each week is a study theme; the videos are pulled from across his 5 course
+  // sections (his course isn't organized into these 10 weeks). Domain labels
+  // reflect the real CompTIA SY0-701 objective domains.
   const curriculum = [
     {
       week: 1,
@@ -123,7 +147,7 @@ export default function SecurityPlusCurriculum() {
     },
     {
       week: 6,
-      title: "Application & Data Security ⭐ AppSec",
+      title: "Application & Data Security  ⭐ AppSec",
       domain: "Domains 2, 3 & 4",
       tasks: [
         { id: 'w6v1', type: 'video', title: 'SQL Injection (2.3)', url: PM + 'sql-injection-sy0-701/', desc: 'The classic injection attack against your data layer.' },
@@ -258,6 +282,7 @@ export default function SecurityPlusCurriculum() {
   const CONFIDENCE_KEY = 'sec-plus-confidence';
   const NOTES_KEY = 'sec-plus-notes';
 
+  // Build a fresh weeks array from the curriculum, applying any saved completion flags.
   const buildWeeks = (completedMap = {}) =>
     curriculum.map(w => ({
       ...w,
@@ -272,32 +297,28 @@ export default function SecurityPlusCurriculum() {
     const loadProgress = async () => {
       let completedMap = {};
       try {
-        const result = await window.storage?.get(STORAGE_KEY);
+        const result = await storage.get(STORAGE_KEY);
         if (result && result.value) completedMap = JSON.parse(result.value);
       } catch (err) {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) completedMap = JSON.parse(saved);
+        // Key doesn't exist yet or storage unavailable — start fresh.
       }
       try {
-        const dateResult = await window.storage?.get(EXAM_DATE_KEY);
+        const dateResult = await storage.get(EXAM_DATE_KEY);
         if (dateResult && dateResult.value) setExamDate(dateResult.value);
-        else setExamDate(localStorage.getItem(EXAM_DATE_KEY) || '');
       } catch (err) {
-        setExamDate(localStorage.getItem(EXAM_DATE_KEY) || '');
+        // No date set yet.
       }
       try {
-        const confResult = await window.storage?.get(CONFIDENCE_KEY);
+        const confResult = await storage.get(CONFIDENCE_KEY);
         if (confResult && confResult.value) setConfidence(JSON.parse(confResult.value));
-        else setConfidence(JSON.parse(localStorage.getItem(CONFIDENCE_KEY) || '{}'));
       } catch (err) {
-        setConfidence(JSON.parse(localStorage.getItem(CONFIDENCE_KEY) || '{}'));
+        // No confidence ratings yet.
       }
       try {
-        const notesResult = await window.storage?.get(NOTES_KEY);
+        const notesResult = await storage.get(NOTES_KEY);
         if (notesResult && notesResult.value) setNotes(JSON.parse(notesResult.value));
-        else setNotes(JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'));
       } catch (err) {
-        setNotes(JSON.parse(localStorage.getItem(NOTES_KEY) || '{}'));
+        // No notes yet.
       }
       setWeeks(buildWeeks(completedMap));
       setLoading(false);
@@ -308,9 +329,13 @@ export default function SecurityPlusCurriculum() {
   const saveExamDate = async (dateStr) => {
     setExamDate(dateStr);
     try {
-      await window.storage?.set(EXAM_DATE_KEY, dateStr);
+      if (dateStr) {
+        await storage.set(EXAM_DATE_KEY, dateStr);
+      } else {
+        await storage.delete(EXAM_DATE_KEY);
+      }
     } catch (err) {
-      localStorage.setItem(EXAM_DATE_KEY, dateStr);
+      console.error('Failed to save exam date:', err);
     }
   };
 
@@ -327,9 +352,9 @@ export default function SecurityPlusCurriculum() {
     const updated = { ...confidence, [weekNum]: rating };
     setConfidence(updated);
     try {
-      await window.storage?.set(CONFIDENCE_KEY, JSON.stringify(updated));
+      await storage.set(CONFIDENCE_KEY, JSON.stringify(updated));
     } catch (err) {
-      localStorage.setItem(CONFIDENCE_KEY, JSON.stringify(updated));
+      console.error('Failed to save confidence rating:', err);
     }
   };
 
@@ -338,12 +363,13 @@ export default function SecurityPlusCurriculum() {
     if (!text) delete updated[taskId];
     setNotes(updated);
     try {
-      await window.storage?.set(NOTES_KEY, JSON.stringify(updated));
+      await storage.set(NOTES_KEY, JSON.stringify(updated));
     } catch (err) {
-      localStorage.setItem(NOTES_KEY, JSON.stringify(updated));
+      console.error('Failed to save note:', err);
     }
   };
 
+  // Exam-weighted readiness: only video tasks map cleanly to a CompTIA domain.
   const getDomainStats = () => {
     const stats = { 1: { done: 0, total: 0 }, 2: { done: 0, total: 0 }, 3: { done: 0, total: 0 }, 4: { done: 0, total: 0 }, 5: { done: 0, total: 0 } };
     weeks.forEach(w => w.tasks.forEach(t => {
@@ -372,6 +398,7 @@ export default function SecurityPlusCurriculum() {
     return weightUsed > 0 ? Math.round((weightedSum / weightUsed) * 100) : 0;
   };
 
+  // Study streak: derived from every task's completedDate, across all types.
   const getStudyDatesSet = () => {
     const set = new Set();
     weeks.forEach(w => w.tasks.forEach(t => {
@@ -414,6 +441,7 @@ export default function SecurityPlusCurriculum() {
     return days;
   };
 
+  // Weeks worth flagging for review: rated 3-or-below, or not yet rated but already has progress.
   const getWeakWeeks = () => {
     return weeks
       .map((w, idx) => ({ idx, week: w, rating: confidence[w.week] || 0, started: w.tasks.some(t => t.completed) }))
@@ -421,13 +449,15 @@ export default function SecurityPlusCurriculum() {
       .sort((a, b) => a.rating - b.rating);
   };
 
+  // Persist only completion state (id -> true), so future curriculum edits
+  // always come from code and never get overwritten by stale saved data.
   const saveProgress = async (updatedWeeks) => {
     const map = {};
     updatedWeeks.forEach(w => w.tasks.forEach(t => { if (t.completed) map[t.id] = t.completedDate || new Date().toISOString(); }));
     try {
-      await window.storage?.set(STORAGE_KEY, JSON.stringify(map));
+      await storage.set(STORAGE_KEY, JSON.stringify(map));
     } catch (err) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(map));
+      console.error('Failed to save progress:', err);
     }
   };
 
@@ -443,7 +473,7 @@ export default function SecurityPlusCurriculum() {
 
   const resetProgress = async () => {
     setWeeks(buildWeeks({}));
-    try { await window.storage?.set(STORAGE_KEY, JSON.stringify({})); } catch (err) { localStorage.setItem(STORAGE_KEY, '{}'); }
+    try { await storage.set(STORAGE_KEY, JSON.stringify({})); } catch (err) { /* noop */ }
   };
 
   const getProgressPercent = () => {
@@ -485,7 +515,51 @@ export default function SecurityPlusCurriculum() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-6">
-      <div className="max-w-4xl mx-auto">
+      <style>{`
+        @media print {
+          .screen-only { display: none !important; }
+          .print-summary { display: block !important; }
+        }
+      `}</style>
+
+      {/* Print-only summary — hidden on screen, shown only when printing */}
+      <div className="print-summary" style={{ display: 'none' }}>
+        <h1 style={{ fontSize: '22px', fontWeight: 'bold', marginBottom: '4px' }}>Security+ Mastery — Progress Summary</h1>
+        <p style={{ fontSize: '11px', color: '#555', marginBottom: '12px' }}>
+          Generated {formatDate(new Date().toISOString())} · Overall: {getProgressPercent()}% · Exam-Weighted Readiness: {getWeightedReadiness()}%
+          {examDate ? ` · Target exam date: ${formatDate(examDate + 'T00:00:00')}` : ''}
+        </p>
+        <div style={{ marginBottom: '16px' }}>
+          <strong style={{ fontSize: '13px' }}>Domain Breakdown</strong>
+          <ul style={{ fontSize: '11px', marginTop: '4px' }}>
+            {Object.keys(DOMAIN_WEIGHTS).map((key) => {
+              const d = Number(key);
+              const s = getDomainStats()[d];
+              const pct = s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
+              return <li key={d}>Domain {d} · {DOMAIN_NAMES[d]} ({DOMAIN_WEIGHTS[d]}%) — {s.done}/{s.total} videos ({pct}%)</li>;
+            })}
+          </ul>
+        </div>
+        {weeks.map((week) => (
+          <div key={week.week} style={{ marginBottom: '14px', pageBreakInside: 'avoid' }}>
+            <strong style={{ fontSize: '13px' }}>
+              Week {week.week}: {week.title} — {week.tasks.filter(t => t.completed).length}/{week.tasks.length}
+              {confidence[week.week] ? ` (confidence ${confidence[week.week]}/5)` : ''}
+            </strong>
+            <ul style={{ fontSize: '11px', marginTop: '2px' }}>
+              {week.tasks.map((t) => (
+                <li key={t.id}>
+                  [{t.completed ? 'x' : ' '}] {t.title}{t.completed && t.completedDate ? ` — ${formatDate(t.completedDate)}` : ''}
+                  {notes[t.id] ? ` — note: ${notes[t.id]}` : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+
+      <div className="screen-only max-w-4xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
           <div className="flex items-start justify-between gap-2">
             <div>
@@ -499,17 +573,37 @@ export default function SecurityPlusCurriculum() {
               <Printer className="w-3.5 h-3.5" /> Export
             </button>
           </div>
+          <p className="text-xs text-gray-500 mb-4">
+            Each week is a study theme that pulls videos from across Messer&apos;s 5 course sections.
+            Domain labels follow the official CompTIA SY0-701 objectives.{' '}
+            <a href={COURSE_INDEX} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 underline">
+              Full 121-video index →
+            </a>
+          </p>
 
-          <div className="bg-white rounded-lg shadow p-4 mt-4">
+          {/* Progress Bar */}
+          <div className="bg-white rounded-lg shadow p-4">
             <div className="flex justify-between items-center mb-2">
               <span className="font-semibold text-gray-700">Overall Progress</span>
               <span className="text-lg font-bold text-indigo-600">{getProgressPercent()}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-500 to-blue-500 h-full transition-all duration-300" style={{ width: `${getProgressPercent()}%` }}></div>
+              <div
+                className="bg-gradient-to-r from-indigo-500 to-blue-500 h-full transition-all duration-300"
+                style={{ width: `${getProgressPercent()}%` }}
+              ></div>
+            </div>
+            <div className="flex justify-between items-center mt-2">
+              <p className="text-sm text-gray-600">
+                {weeks.reduce((acc, w) => acc + w.tasks.filter(t => t.completed).length, 0)} of {weeks.reduce((acc, w) => acc + w.tasks.length, 0)} tasks complete
+              </p>
+              <button onClick={resetProgress} className="text-xs text-gray-400 hover:text-gray-600 underline">
+                Reset progress
+              </button>
             </div>
           </div>
 
+          {/* Exam-Weighted Readiness */}
           <div className="bg-white rounded-lg shadow p-4 mt-3">
             <div className="flex justify-between items-center mb-2">
               <span className="font-semibold text-gray-700 inline-flex items-center gap-1">
@@ -518,17 +612,187 @@ export default function SecurityPlusCurriculum() {
               <span className="text-lg font-bold text-purple-600">{getWeightedReadiness()}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-full transition-all duration-300" style={{ width: `${getWeightedReadiness()}%` }}></div>
+              <div
+                className="bg-gradient-to-r from-purple-500 to-pink-500 h-full transition-all duration-300"
+                style={{ width: `${getWeightedReadiness()}%` }}
+              ></div>
             </div>
             <div className="flex justify-between items-center mt-2">
-              <p className="text-xs text-gray-500">Weighted by SY0-701 domain percentages</p>
-              <button onClick={() => setShowDomainBreakdown(!showDomainBreakdown)} className="text-xs text-purple-600 hover:text-purple-800 underline">
-                {showDomainBreakdown ? 'Hide' : 'Show'}
+              <p className="text-xs text-gray-500">Weighted by the real SY0-701 domain percentages, not raw task count.</p>
+              <button onClick={() => setShowDomainBreakdown(!showDomainBreakdown)} className="text-xs text-purple-600 hover:text-purple-800 underline flex-shrink-0 ml-2">
+                {showDomainBreakdown ? 'Hide breakdown' : 'Show breakdown'}
               </button>
             </div>
+            {showDomainBreakdown && (
+              <div className="mt-3 pt-3 border-t border-gray-100 space-y-2">
+                {Object.keys(DOMAIN_WEIGHTS).map((key) => {
+                  const d = Number(key);
+                  const stats = getDomainStats()[d];
+                  const pct = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
+                  return (
+                    <div key={d}>
+                      <div className="flex justify-between items-center text-xs text-gray-600 mb-0.5">
+                        <span>Domain {d} · {DOMAIN_NAMES[d]} ({DOMAIN_WEIGHTS[d]}%)</span>
+                        <span>{stats.done}/{stats.total} videos</span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                        <div className="bg-purple-400 h-full" style={{ width: `${pct}%` }}></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Weak Areas / Review Focus */}
+          {getWeakWeeks().length > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg shadow p-4 mt-3">
+              <span className="font-semibold text-amber-800 text-sm">🎯 Recommended Review Focus</span>
+              <div className="mt-2 space-y-1">
+                {getWeakWeeks().map(({ idx, week, rating }) => (
+                  <button
+                    key={week.week}
+                    onClick={() => setExpandedWeek(idx)}
+                    className="block text-left text-sm text-amber-700 hover:text-amber-900 hover:underline"
+                  >
+                    W{week.week} · {week.title} — rated {rating}/5
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Study Streak */}
+          <div className="bg-white rounded-lg shadow mt-3 overflow-hidden">
+            <button
+              onClick={() => setShowStreak(!showStreak)}
+              className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            >
+              <span className="font-semibold text-gray-700 inline-flex items-center gap-1">
+                <Flame className="w-4 h-4 text-orange-500" /> Study Streak
+                {getStreakStats().current > 0 && <span className="text-orange-600 font-bold">· {getStreakStats().current} day{getStreakStats().current === 1 ? '' : 's'}</span>}
+              </span>
+              <div className="text-indigo-600">
+                {showStreak ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </div>
+            </button>
+            {showStreak && (
+              <div className="px-4 pb-4 border-t border-gray-200 pt-3">
+                {(() => {
+                  const stats = getStreakStats();
+                  return (
+                    <p className="text-xs text-gray-500 mb-3">
+                      Current streak: <span className="font-semibold text-orange-600">{stats.current} day{stats.current === 1 ? '' : 's'}</span> ·
+                      {' '}Longest: <span className="font-semibold">{stats.longest} day{stats.longest === 1 ? '' : 's'}</span> ·
+                      {' '}Total study days: <span className="font-semibold">{stats.totalDays}</span>
+                    </p>
+                  );
+                })()}
+                <div className="flex flex-wrap gap-1">
+                  {getHeatmapDays(70).map((d) => (
+                    <div
+                      key={d.date}
+                      title={d.date}
+                      className={`w-3 h-3 rounded-sm ${d.studied ? 'bg-orange-500' : 'bg-gray-200'}`}
+                    ></div>
+                  ))}
+                </div>
+                <p className="text-xs text-gray-400 mt-2">Last 70 days · each square is a day with at least one completed task</p>
+              </div>
+            )}
+          </div>
+
+          {/* Exam Target Date */}
+          <div className="bg-white rounded-lg shadow p-4 mt-3">
+            <div className="flex justify-between items-center flex-wrap gap-2">
+              <span className="font-semibold text-gray-700">Target Exam Date</span>
+              {!editingDate && (
+                <button
+                  onClick={() => setEditingDate(true)}
+                  className="text-xs text-indigo-600 hover:text-indigo-800 underline"
+                >
+                  {examDate ? 'Change date' : 'Set a date'}
+                </button>
+              )}
+            </div>
+
+            {editingDate ? (
+              <div className="flex items-center gap-2 mt-2 flex-wrap">
+                <input
+                  type="date"
+                  defaultValue={examDate}
+                  onChange={(e) => saveExamDate(e.target.value)}
+                  className="border border-gray-300 rounded px-2 py-1 text-sm text-gray-700"
+                />
+                <button
+                  onClick={() => setEditingDate(false)}
+                  className="text-xs bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-700"
+                >
+                  Done
+                </button>
+                {examDate && (
+                  <button
+                    onClick={() => { saveExamDate(''); setEditingDate(false); }}
+                    className="text-xs text-gray-400 hover:text-gray-600 underline"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            ) : examDate ? (
+              (() => {
+                const days = getDaysUntilExam();
+                const isPast = days < 0;
+                return (
+                  <p className={`text-sm mt-1 ${isPast ? 'text-amber-600' : 'text-gray-600'}`}>
+                    {isPast
+                      ? `Target date (${formatDate(examDate + 'T00:00:00')}) has passed — update it whenever you're ready.`
+                      : days === 0
+                      ? "Today's the day! 🎯"
+                      : <>Booked for <span className="font-semibold text-indigo-600">{formatDate(examDate + 'T00:00:00')}</span> — <span className="font-semibold">{days} day{days === 1 ? '' : 's'}</span> away (~{Math.round(days / 7)} week{Math.round(days / 7) === 1 ? '' : 's'}).</>}
+                  </p>
+                );
+              })()
+            ) : (
+              <p className="text-sm text-gray-500 mt-1">Not set yet — no pressure. Set one whenever you're ready to commit.</p>
+            )}
+          </div>
+
+          {/* Resources Panel Toggle */}
+          <div className="bg-white rounded-lg shadow mt-3 overflow-hidden">
+            <button
+              onClick={() => setShowResources(!showResources)}
+              className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            >
+              <span className="font-semibold text-gray-700">📚 Study Resources</span>
+              <div className="text-indigo-600">
+                {showResources ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </div>
+            </button>
+            {showResources && (
+              <div className="px-4 pb-4 space-y-2 border-t border-gray-200 pt-3">
+                {RESOURCES.map((r) => (
+                  <a
+                    key={r.url}
+                    href={r.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-2 rounded hover:bg-gray-50 transition-colors"
+                  >
+                    <span className="text-sm font-medium text-indigo-700 hover:text-indigo-900 inline-flex items-center gap-1">
+                      {r.label}
+                      <ExternalLink className="w-3 h-3" />
+                    </span>
+                    <p className="text-xs text-gray-500">{r.desc}</p>
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
+        {/* Weeks */}
         <div className="space-y-4">
           {weeks.map((week, weekIdx) => {
             const completedTasks = week.tasks.filter(t => t.completed).length;
@@ -537,18 +801,26 @@ export default function SecurityPlusCurriculum() {
 
             return (
               <div key={week.week} className="bg-white rounded-lg shadow-md overflow-hidden">
+                {/* Week Header */}
                 <button
                   onClick={() => setExpandedWeek(isExpanded ? -1 : weekIdx)}
                   className="w-full px-4 md:px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
                 >
-                  <div className="flex items-center gap-3 flex-1 text-left">
-                    <div className="text-xl md:text-2xl font-bold text-indigo-600">W{week.week}</div>
-                    <div className="flex-1">
-                      <h2 className="text-base md:text-lg font-semibold text-gray-800">{week.title}</h2>
+                  <div className="flex items-center gap-3 md:gap-4 flex-1 text-left">
+                    <div className="text-xl md:text-2xl font-bold text-indigo-600 min-w-12">W{week.week}</div>
+                    <div className="flex-1 min-w-0">
+                      <h2 className="text-base md:text-lg font-semibold text-gray-800 truncate">{week.title}</h2>
                       <p className="text-xs md:text-sm text-gray-600">{week.domain}</p>
                     </div>
+                    {confidence[week.week] > 0 && (
+                      <div className="hidden sm:flex items-center gap-0.5 flex-shrink-0" title={`Confidence: ${confidence[week.week]}/5`}>
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <Star key={n} className={`w-3 h-3 ${n <= confidence[week.week] ? 'fill-yellow-400 text-yellow-400' : 'text-gray-200'}`} />
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2 md:gap-4 flex-shrink-0">
                     <div className="text-xs md:text-sm font-medium text-gray-600">
                       {completedTasks}/{totalTasks}
                     </div>
@@ -558,42 +830,126 @@ export default function SecurityPlusCurriculum() {
                   </div>
                 </button>
 
-                <div className="px-4 md:px-6 py-2 bg-gray-50">
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-green-500 h-full transition-all duration-300" style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}></div>
+                {/* Week Progress Bar */}
+                <div className="px-4 md:px-6 py-2 bg-gray-50 border-t border-b border-gray-200">
+                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-green-500 h-full transition-all duration-300"
+                      style={{ width: `${totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0}%` }}
+                    ></div>
                   </div>
                 </div>
 
+                {/* Week Content */}
                 {isExpanded && (
                   <div className="px-4 md:px-6 py-4 border-t border-gray-200 space-y-3">
+                    {/* Confidence Rating */}
+                    <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-gray-100">
+                      <span className="text-sm text-gray-600">How confident do you feel on this week?</span>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button key={n} onClick={() => saveConfidence(week.week, n)} className="p-0.5">
+                            <Star className={`w-5 h-5 ${n <= (confidence[week.week] || 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 hover:text-yellow-300'}`} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
                     {week.tasks.map((task, taskIdx) => (
-                      <div key={task.id} className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50">
-                        <button onClick={() => toggleTask(weekIdx, taskIdx)} className="mt-1 flex-shrink-0">
-                          {task.completed ? (
-                            <CheckCircle2 className="w-6 h-6 text-green-500" />
-                          ) : (
-                            <Circle className="w-6 h-6 text-gray-300" />
-                          )}
-                        </button>
-                        <div className="flex-1">
-                          <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <span className="text-indigo-600">{getTaskIcon(task.type)}</span>
-                            {task.url ? (
-                              <a href={task.url} target="_blank" rel="noopener noreferrer" className={`font-semibold inline-flex items-center gap-1 hover:underline ${task.completed ? 'text-gray-400 line-through' : 'text-indigo-700'}`}>
-                                {task.title}
-                                <ExternalLink className="w-3.5 h-3.5" />
-                              </a>
+                      <div key={task.id}>
+                        <div className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                          <button
+                            onClick={() => toggleTask(weekIdx, taskIdx)}
+                            className="mt-1 flex-shrink-0 transition-colors hover:text-indigo-600"
+                          >
+                            {task.completed ? (
+                              <CheckCircle2 className="w-6 h-6 text-green-500" />
                             ) : (
-                              <h3 className={`font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
-                                {task.title}
-                              </h3>
+                              <Circle className="w-6 h-6 text-gray-300" />
                             )}
-                            <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded capitalize">
-                              {task.type}
-                            </span>
+                          </button>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center gap-2 mb-1">
+                              <span className="text-indigo-600 flex-shrink-0">{getTaskIcon(task.type)}</span>
+                              {task.url ? (
+                                <a
+                                  href={task.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`font-semibold inline-flex items-center gap-1 hover:underline ${task.completed ? 'text-gray-400 line-through' : 'text-indigo-700 hover:text-indigo-900'}`}
+                                >
+                                  {task.title}
+                                  <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
+                                </a>
+                              ) : (
+                                <h3 className={`font-semibold ${task.completed ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
+                                  {task.title}
+                                </h3>
+                              )}
+                              <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded capitalize flex-shrink-0">
+                                {task.type}
+                              </span>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-2">{task.desc}</p>
+
+                            {task.completed && task.completedDate && (
+                              <p className="text-xs text-green-600 font-medium mb-2">✓ Completed {formatDate(task.completedDate)}</p>
+                            )}
+
+                            {/* Quiz Button */}
+                            {task.type === 'quiz' && quizzes[task.id] && (
+                              <button
+                                onClick={() => setShowQuiz(showQuiz === task.id ? null : task.id)}
+                                className="text-sm text-indigo-600 hover:text-indigo-800 font-medium underline mr-3"
+                              >
+                                {showQuiz === task.id ? 'Hide Quiz' : 'Take Quiz'}
+                              </button>
+                            )}
+
+                            {/* Note Toggle */}
+                            <button
+                              onClick={() => setOpenNoteTaskId(openNoteTaskId === task.id ? null : task.id)}
+                              className="text-sm text-gray-500 hover:text-gray-700 font-medium underline inline-flex items-center gap-1"
+                            >
+                              <StickyNote className="w-3.5 h-3.5" />
+                              {notes[task.id] ? 'Edit note' : 'Add note'}
+                            </button>
+                            {notes[task.id] && openNoteTaskId !== task.id && (
+                              <p className="text-xs text-gray-500 italic mt-1 bg-gray-50 rounded p-2">📝 {notes[task.id]}</p>
+                            )}
+                            {openNoteTaskId === task.id && (
+                              <textarea
+                                defaultValue={notes[task.id] || ''}
+                                onBlur={(e) => saveNote(task.id, e.target.value)}
+                                placeholder="Jot a quick note or gotcha for this one..."
+                                className="w-full mt-2 text-sm border border-gray-300 rounded p-2 text-gray-700"
+                                rows={2}
+                              />
+                            )}
                           </div>
-                          <p className="text-sm text-gray-600 mb-2">{task.desc}</p>
                         </div>
+
+                        {/* Quiz Content */}
+                        {showQuiz === task.id && quizzes[task.id] && (
+                          <div className="ml-4 md:ml-9 mt-3 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                            <h4 className="font-bold text-indigo-800 mb-3 text-sm md:text-base">Checkpoint Quiz</h4>
+                            <div className="space-y-3">
+                              {quizzes[task.id].map((item, idx) => (
+                                <div key={idx} className="bg-white p-3 rounded border border-indigo-100">
+                                  <p className="font-semibold text-gray-800 mb-2 text-sm md:text-base">{idx + 1}. {item.q}</p>
+                                  <details className="cursor-pointer">
+                                    <summary className="text-indigo-600 hover:text-indigo-800 text-xs md:text-sm font-medium">
+                                      Reveal Answer
+                                    </summary>
+                                    <p className="mt-2 text-gray-700 text-xs md:text-sm bg-green-50 p-2 rounded border-l-4 border-green-400">
+                                      {item.a}
+                                    </p>
+                                  </details>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -601,6 +957,13 @@ export default function SecurityPlusCurriculum() {
               </div>
             );
           })}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 text-center text-gray-600 text-xs md:text-sm space-y-1">
+          <p>📺 Video links go straight to Professor Messer&apos;s free SY0-701 videos (open in a new tab)</p>
+          <p>💪 Use TryHackMe, HackTheBox &amp; OWASP WebGoat for the hands-on labs</p>
+          <p>✅ Check off tasks to track progress — it saves automatically</p>
         </div>
       </div>
     </div>

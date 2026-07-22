@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './study.css';
 
 export default function StudyLogin() {
   const [password, setPassword] = useState('');
