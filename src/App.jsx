@@ -1514,7 +1514,7 @@ export default function App() {
   }, [])
 
   return (
-    <div style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', background: 'var(--bg-primary)' }}>
+    <div className="dd-site" style={{ width: '100%', maxWidth: '100%', overflowX: 'hidden', background: 'var(--bg-primary)' }}>
       <ScrollProgress />
       <Nav />
       <Hero />
