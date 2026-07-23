@@ -274,6 +274,64 @@ export default function SecurityPlusCurriculum() {
     ]
   };
 
+  // Scenario-style practice questions, distinct from the checkpoint quizzes above.
+  const practiceQuestions = {
+    'w1p1': [
+      { q: 'A user gets an email claiming to be from IT, asking them to "verify" their password via a link. What technique is this, and what should the user do?', a: "Phishing (social engineering). Don't click the link — verify the request through a separate known-good channel and report it to IT/security." },
+      { q: 'Malware secretly encrypts a user\'s files and demands payment for the decryption key. What type of malware is this?', a: 'Ransomware.' },
+      { q: 'What distinguishes a nation-state threat actor from a typical cybercriminal?', a: 'Nation-states are usually well-funded, sophisticated, and motivated by espionage/geopolitical goals; cybercriminals are typically financially motivated with fewer resources.' },
+      { q: 'An employee installs unauthorized cloud storage software on a work laptop to make their job easier. What is this called, and why is it risky?', a: 'Shadow IT — it bypasses security controls and creates unmonitored data exposure.' }
+    ],
+    'w2p1': [
+      { q: "Why can't hashing alone be used to send a message confidentially?", a: "Hashing is one-way and irreversible — it verifies integrity, not confidentiality." },
+      { q: 'In PKI, which key encrypts a message intended for a specific recipient?', a: "The recipient's public key — only their private key can decrypt it." },
+      { q: 'What is a digital signature, and what does it provide?', a: "A hash of the message encrypted with the sender's private key; it provides authentication, integrity, and non-repudiation." },
+      { q: 'Why is symmetric encryption used for bulk data even though asymmetric solves key exchange?', a: "Symmetric is far faster computationally; asymmetric securely exchanges the symmetric key, then symmetric encryption handles the actual data." }
+    ],
+    'w3p1': [
+      { q: 'A hospital wants nurses to only see records for patients on their unit, enforced centrally by IT policy rather than by individual doctors. Which access control model fits?', a: 'MAC (Mandatory Access Control) — centrally enforced by policy, not by resource owners.' },
+      { q: 'An employee shares a folder they own directly with a coworker, without IT involvement. What model allows this?', a: 'DAC (Discretionary Access Control) — the resource owner controls access.' },
+      { q: 'Name the four MFA factor categories.', a: 'Something you know, something you have, something you are, somewhere you are.' },
+      { q: 'Why is a fingerprint scan alone not true multi-factor authentication?', a: "It's only one factor (something you are); MFA requires at least two different factor categories." }
+    ],
+    'w4p1': [
+      { q: 'A company wants to inspect and block malicious HTTP traffic targeting their web app specifically. What firewall type should they deploy?', a: 'A WAF (Web Application Firewall).' },
+      { q: 'Why might a team choose an IDS over an IPS for a critical, low-latency production segment?', a: "IDS is passive (monitor/alert only), so it can't accidentally block legitimate traffic or introduce the latency an inline IPS could." },
+      { q: 'What is the security benefit of placing public-facing servers in a screened subnet (DMZ)?', a: "It isolates them from the internal network, limiting the blast radius if a public server is compromised." },
+      { q: 'How does network segmentation reduce the impact of a breach?', a: "It limits lateral movement — an attacker who compromises one segment can't automatically reach others." }
+    ],
+    'w5p1': [
+      { q: "What vulnerability does WPA3's SAE handshake address compared to WPA2?", a: 'It protects against offline dictionary/brute-force attacks on the handshake and provides forward secrecy.' },
+      { q: 'What is the purpose of 802.1X in an enterprise wireless network?', a: 'Port-based network access control — typically requiring RADIUS/EAP authentication before granting network access.' },
+      { q: 'Why is IPSec commonly used for site-to-site VPNs rather than TLS?', a: 'IPSec operates at the network layer and can transparently secure all IP traffic between sites, not just application-layer traffic like TLS.' },
+      { q: "A deauthentication attack is launched against a wireless client. What's the attacker's likely goal?", a: 'To force a reconnect/re-handshake — often to capture the handshake for offline cracking, or as part of a DoS or rogue AP attack.' }
+    ],
+    'w6p1': [
+      { q: "An attacker submits ' OR '1'='1 into a login form and gets in without valid credentials. What's being exploited, and what's the primary defense?", a: 'SQL Injection; defend with parameterized queries/prepared statements and input validation.' },
+      { q: 'What is the difference between reflected and stored XSS?', a: "Reflected XSS executes immediately from a crafted request and isn't persisted; stored XSS is saved server-side and served to other users later." },
+      { q: 'Why is encrypting data at rest not sufficient on its own to protect sensitive data?', a: "It doesn't protect data in transit or in use — if an attacker gains valid application-level access, the data is decrypted for them anyway." },
+      { q: 'What does a DLP (Data Loss Prevention) solution do?', a: 'Monitors and blocks unauthorized transfer or exposure of sensitive data, e.g. blocking an email containing credit card numbers from leaving the org.' }
+    ],
+    'w7p1': [
+      { q: 'A system has an RTO of 4 hours and an RPO of 1 hour. What do these mean in practice?', a: 'RTO: the system must be restored within 4 hours of an outage. RPO: at most 1 hour of data can be lost, so backups/replication must occur at least hourly.' },
+      { q: 'Why isolate a compromised system before eradicating the malware?', a: 'To contain the threat and prevent further spread or damage before starting cleanup.' },
+      { q: 'What is chain of custody, and why does it matter when an incident may involve legal action?', a: 'Documentation of who handled evidence and when — it preserves the integrity and admissibility of that evidence in legal proceedings.' },
+      { q: 'What is the purpose of a post-incident "lessons learned" review?', a: 'To identify root cause and process gaps, improving future detection/response and preventing recurrence.' }
+    ],
+    'w8p1': [
+      { q: 'A company buys cyber insurance instead of immediately fixing every low-priority vulnerability. Which risk strategy is this?', a: 'Risk transfer.' },
+      { q: 'What is the difference between risk appetite and risk tolerance?', a: "Risk appetite is the overall amount of risk an org is willing to accept pursuing its objectives; risk tolerance is the acceptable variation around a specific risk metric." },
+      { q: 'Why would a company include a "right-to-audit" clause in a vendor contract?', a: "To verify the third party's security controls and compliance directly, reducing supply chain risk." },
+      { q: 'What is the difference between an internal and an external audit?', a: "Internal audits are done by the organization's own staff for self-assessment; external audits are done by an independent third party, often for compliance/certification." }
+    ],
+    'w9p1': [
+      { q: 'In a SaaS model, who is typically responsible for patching the underlying operating system?', a: 'The cloud provider — the customer only manages their data/configuration within the app.' },
+      { q: 'Why are containers a security concern despite their isolation benefits?', a: 'They share the host OS kernel, so a container escape or kernel vulnerability can compromise the host or neighboring containers; image tampering and misconfig are risks too.' },
+      { q: 'What is the purpose of a SIEM in security operations?', a: 'Aggregates and correlates logs from multiple sources to support detection, alerting, and reporting.' },
+      { q: 'What is a benefit of automating routine security operations tasks?', a: 'Faster, more consistent response, reduced human error, and it frees analysts for higher-value work.' }
+    ]
+  };
+
   const STORAGE_KEY = 'sec-plus-progress-v2';
   const EXAM_DATE_KEY = 'sec-plus-exam-date';
   const CONFIDENCE_KEY = 'sec-plus-confidence';
@@ -874,13 +932,15 @@ export default function SecurityPlusCurriculum() {
                               <p className="text-xs text-green-600 font-medium mb-2">✓ Completed {formatDate(task.completedDate)}</p>
                             )}
 
-                            {/* Quiz Button */}
-                            {task.type === 'quiz' && quizzes[task.id] && (
+                            {/* Quiz / Practice Qs Button */}
+                            {(quizzes[task.id] || practiceQuestions[task.id]) && (
                               <button
                                 onClick={() => setShowQuiz(showQuiz === task.id ? null : task.id)}
                                 className="text-sm text-indigo-600 hover:text-indigo-800 font-medium underline mr-3"
                               >
-                                {showQuiz === task.id ? 'Hide Quiz' : 'Take Quiz'}
+                                {showQuiz === task.id
+                                  ? (task.type === 'quiz' ? 'Hide Quiz' : 'Hide Practice Qs')
+                                  : (task.type === 'quiz' ? 'Take Quiz' : 'View Practice Qs')}
                               </button>
                             )}
 
@@ -897,12 +957,14 @@ export default function SecurityPlusCurriculum() {
                           </div>
                         </div>
 
-                        {/* Quiz Content */}
-                        {showQuiz === task.id && quizzes[task.id] && (
+                        {/* Quiz / Practice Qs Content */}
+                        {showQuiz === task.id && (quizzes[task.id] || practiceQuestions[task.id]) && (
                           <div className="ml-4 md:ml-9 mt-3 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                            <h4 className="font-bold text-indigo-800 mb-3 text-sm md:text-base">Checkpoint Quiz</h4>
+                            <h4 className="font-bold text-indigo-800 mb-3 text-sm md:text-base">
+                              {task.type === 'quiz' ? 'Checkpoint Quiz' : 'Practice Questions'}
+                            </h4>
                             <div className="space-y-3">
-                              {quizzes[task.id].map((item, idx) => (
+                              {(quizzes[task.id] || practiceQuestions[task.id]).map((item, idx) => (
                                 <div key={idx} className="bg-white p-3 rounded border border-indigo-100">
                                   <p className="font-semibold text-gray-800 mb-2 text-sm md:text-base">{idx + 1}. {item.q}</p>
                                   <details className="cursor-pointer">
