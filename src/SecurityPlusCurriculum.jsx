@@ -20,13 +20,14 @@ const RESOURCES = [
   { label: "Messer's Course Notes & Practice Exams", url: PRACTICE_EXAMS, desc: 'Paid 96-page PDF notes + three 90-question practice exams.' }
 ];
 
-// Notion notebook — general database plus per-week entries as they get added.
-// Falls back to the general database link for any week without its own entry yet.
+// Notion notebook — general database plus per-video entries as they get added.
+// Falls back to the general database link for any task without its own entry yet.
 const NOTION_NOTES_DB_URL = 'https://app.notion.com/p/8fc9a773b7544c8a8c0d9d2ea61ed8bd';
-const NOTION_WEEK_URLS = {
-  1: 'https://app.notion.com/p/3a5466b1ce4d814b9198db9a44e75844',
+const NOTION_TASK_URLS = {
+  w1v1: 'https://app.notion.com/p/3a5466b1ce4d814b9198db9a44e75844', // Security Controls Framework
+  w1v5: 'https://app.notion.com/p/3a6466b1ce4d819b8d9bc6349cae49cb', // An Overview of Malware
 };
-const getNotionUrlForWeek = (week) => NOTION_WEEK_URLS[week] || NOTION_NOTES_DB_URL;
+const getNotionUrlForTask = (taskId) => NOTION_TASK_URLS[taskId] || NOTION_NOTES_DB_URL;
 
 // Real CompTIA SY0-701 domain weights (per the official exam objectives)
 const DOMAIN_WEIGHTS = { 1: 12, 2: 22, 3: 18, 4: 28, 5: 20 };
@@ -885,7 +886,7 @@ export default function SecurityPlusCurriculum() {
 
                             {/* Notes link */}
                             <a
-                              href={getNotionUrlForWeek(week.week)}
+                              href={getNotionUrlForTask(task.id)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="text-sm text-gray-500 hover:text-gray-700 font-medium underline inline-flex items-center gap-1"
