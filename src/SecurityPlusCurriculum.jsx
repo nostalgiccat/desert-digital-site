@@ -70,6 +70,8 @@ export default function SecurityPlusCurriculum() {
         { id: 'w1v3', type: 'video', title: 'Threat Actors (2.1)', url: PM + 'threat-actors-sy0-701/', desc: 'Nation states, organized crime, insiders, shadow IT, and their motivations.' },
         { id: 'w1v4', type: 'video', title: 'Common Threat Vectors (2.2)', url: PM + 'common-threat-vectors-sy0-701/', desc: 'Messages, files, default credentials, and other ways attackers get in.' },
         { id: 'w1v5', type: 'video', title: 'An Overview of Malware (2.4)', url: PM + 'an-overview-of-malware-sy0-701/', desc: 'Malware and ransomware fundamentals.' },
+        { id: 'w1v6', type: 'video', title: 'Change Management (1.3)', url: PM + 'change-management-sy0-701/', desc: 'Why formal change control matters and the typical approval/rollback workflow.' },
+        { id: 'w1v7', type: 'video', title: 'Technical Change Management (1.3)', url: PM + 'technical-change-management-sy0-701/', desc: "Change management from a technician's perspective — implementation and documentation." },
         { id: 'w1l1', type: 'lab', title: 'Set up VirtualBox + Kali Linux', desc: 'Install a VM for hands-on practice all quarter.' },
         { id: 'w1p1', type: 'practice', title: 'Practice Qs: Threats', desc: 'Malware types, social engineering, threat actors.' },
         { id: 'w1q1', type: 'quiz', title: 'Checkpoint Quiz', desc: 'Threats & fundamentals' }
@@ -183,6 +185,8 @@ export default function SecurityPlusCurriculum() {
         { id: 'w8v5', type: 'video', title: 'Third-party Risk Assessment (5.3)', url: PM + 'third-party-risk-assessment-sy0-701/', desc: 'Right-to-audit, supply chain, vendor monitoring.' },
         { id: 'w8v6', type: 'video', title: 'Compliance (5.4)', url: PM + 'compliance-sy0-701/', desc: 'Regulatory compliance, monitoring, consequences.' },
         { id: 'w8v7', type: 'video', title: 'Audits and Assessments (5.5)', url: PM + 'audits-and-assessments-sy0-701/', desc: 'Internal vs external audits.' },
+        { id: 'w8v8', type: 'video', title: 'Security Awareness (5.6)', url: PM + 'security-awareness-sy0-701/', desc: 'Phishing campaigns, anomalous behavior recognition, and reporting.' },
+        { id: 'w8v9', type: 'video', title: 'User Training (5.6)', url: PM + 'user-training-sy0-701/', desc: 'Training delivery methods and tracking program effectiveness.' },
         { id: 'w8l1', type: 'lab', title: 'Risk Register Exercise', desc: 'Build a risk matrix for a fictional company.' },
         { id: 'w8p1', type: 'practice', title: 'Practice Qs: GRC', desc: 'Frameworks, risk scoring, compliance.' },
         { id: 'w8q1', type: 'quiz', title: 'Checkpoint Quiz', desc: 'Governance & Risk' }
@@ -200,6 +204,7 @@ export default function SecurityPlusCurriculum() {
         { id: 'w9v5', type: 'video', title: 'Security Tools (4.4)', url: PM + 'security-tools-sy0-701/', desc: 'SCAP, SIEM, secure baselines.' },
         { id: 'w9v6', type: 'video', title: 'Log Data (4.9)', url: PM + 'log-data-sy0-701/', desc: 'Firewall, application, endpoint, and OS logs.' },
         { id: 'w9v7', type: 'video', title: 'Scripting and Automation (4.7)', url: PM + 'scripting-and-automation-sy0-701/', desc: 'Automation benefits and use cases.' },
+        { id: 'w9v8', type: 'video', title: 'Asset Management (4.2)', url: PM + 'asset-management-sy0-701/', desc: 'Procurement, asset tracking, media sanitization, and physical destruction.' },
         { id: 'w9l1', type: 'lab', title: 'Docker Security Lab', desc: 'Spin up a container and practice hardening it.' },
         { id: 'w9p1', type: 'practice', title: 'Practice Qs: Cloud & Ops', desc: 'Cloud models, containers, log analysis.' },
         { id: 'w9q1', type: 'quiz', title: 'Checkpoint Quiz', desc: 'Cloud & Security Operations' }
